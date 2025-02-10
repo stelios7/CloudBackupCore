@@ -14,6 +14,24 @@ namespace Cloud_Backup_Core.Models
 {
     public class FtpUploader : BaseSetting
     {
+        private static FtpUploader _instance;
+        private static readonly object _lock = new object();
+
+        public static FtpUploader Instance
+        {
+            get
+            {
+                lock (_lock)
+                {
+                    if (_instance == null)
+                    {
+                        _instance = new FtpUploader();
+                    }
+                    return _instance;
+                }
+            }
+        }
+
         public string FtpUsername { get; set; }
         public string FtpPassword { get; set; }
         public string FtpServer { get; set; }
@@ -26,6 +44,16 @@ namespace Cloud_Backup_Core.Models
             get { return ups; }
             set { ups = value; 
                 OnPropertyChanged(nameof(UploadProgressString));
+            }
+        }
+
+        private double progressValue;
+
+        public double ProgressValue
+        {
+            get { return progressValue; }
+            set { progressValue = value;
+                OnPropertyChanged(nameof(ProgressValue));
             }
         }
 
@@ -71,9 +99,10 @@ namespace Cloud_Backup_Core.Models
                     }
                     else
                     {
-                        UploadProgressString = p.Progress.ToString("F2");
                         Logger.Log($"{lfp} progress: {p.Progress}", true);
                     }
+                    ProgressValue = p.Progress;
+                    UploadProgressString = $"{((int)ProgressValue)}%";
                 });
 
                 using (var client = new AsyncFtpClient(FtpServer, FtpUsername, FtpPassword, FtpPort))

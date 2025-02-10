@@ -7,8 +7,8 @@
         xmlns:converters="clr-namespace:Cloud_Backup_Core.Helpers"
 		xmlns:settings="clr-namespace:Cloud_Backup_Core.Views"
         mc:Ignorable="d"
-        Title="Cloud Backup Core" Height="250" Width="350"
-		ResizeMode="CanResize"
+        Title="Cloud Backup Core" Height="250" Width="300"
+		ResizeMode="NoResize"
 		
 		>
 	<Window.Resources>
@@ -21,7 +21,9 @@
 		<Grid.RowDefinitions>
 			<RowDefinition Height="20" />
 			<RowDefinition Height="*" />
-			<RowDefinition Height="20" />
+			<RowDefinition Height="25" />
+			<RowDefinition Height="25" />
+			<RowDefinition Height="15" />
 		</Grid.RowDefinitions>
 		<TextBox x:Name="RootPassword" Height="10" Width="50" HorizontalAlignment="Left"
 					 FontSize="6" AcceptsReturn="True" Grid.Row="0" Margin="5 0"
@@ -49,14 +51,35 @@
 					/>
 			</StackPanel>
 		</StackPanel>
-		<StackPanel Orientation="Horizontal" Grid.Row="2" VerticalAlignment="Center" Margin="5 0">
-			<Label Padding="0" Margin="1 1 1 1" FontSize="12" HorizontalContentAlignment="Stretch" Width="auto" VerticalContentAlignment="Stretch" Content="Status:" />
-			<Label Padding="0" Margin="1 1 5 0" FontSize="12" HorizontalContentAlignment="Stretch" Width="60" VerticalContentAlignment="Stretch" 
-				   Content="{Binding BackupStatus, Converter={StaticResource BackupStatusToStringConverter}}" />
-			<Label Padding="0" Margin="0 1 5 0" FontSize="12" HorizontalContentAlignment="Stretch" Width="40" VerticalContentAlignment="Stretch" 
-				   Content="{Binding FtpUploader.UploadProgressString, UpdateSourceTrigger=PropertyChanged}"/>
-			<Label Padding="0" Margin="1 1 1 1" FontSize="12" HorizontalContentAlignment="Stretch" Width="auto" VerticalContentAlignment="Stretch" Content="Last sync:" />
-			<Label Padding="0" Margin="0 1 5 0" FontSize="12" HorizontalContentAlignment="Stretch" Width="120" VerticalContentAlignment="Stretch" Content="{Binding LastBackupTime}" />
-		</StackPanel>
+
+		<StatusBar Grid.Row="2" Padding="0" Margin="0">
+			<StatusBarItem>
+				<TextBlock Text="Status:" VerticalAlignment="center" FontSize="11"/>
+			</StatusBarItem>
+
+			<StatusBar Padding="0" Margin="0">
+				<TextBlock Padding="0" Margin="0" FontSize="11" VerticalAlignment="Center" Width="auto"
+					Text="{Binding BackupStatus, Converter={StaticResource BackupStatusToStringConverter}}" />
+			</StatusBar>
+			<StatusBarItem Name="FileBeingUploaded">
+				<TextBlock Padding="0" FontSize="11" Width="auto" VerticalAlignment="Center" 
+						Text="{Binding FileBeingUploaded, UpdateSourceTrigger=PropertyChanged}"/>
+			</StatusBarItem>
+		</StatusBar>
+		
+		<StatusBar Grid.Row="3" Padding="0" Margin="0">
+			<StackPanel Orientation="Horizontal" VerticalAlignment="Center" >
+				<Label Margin="0 0" Padding="0" FontSize="12" HorizontalContentAlignment="Stretch" Width="auto" VerticalContentAlignment="Stretch" Content="Last sync:" />
+				<Label Margin="5 0" Padding="0" FontSize="12" HorizontalContentAlignment="Stretch" Width="120" VerticalContentAlignment="Stretch" Content="{Binding LastBackupTime}" />
+			</StackPanel>
+		</StatusBar>
+
+		<StatusBar Grid.Row="4" Padding="0" Margin="0">
+			<StatusBarItem HorizontalAlignment="Center" Padding="0" Margin="0">
+				<ProgressBar Margin="0" Padding="0" Height="10" Width="250" Value="{Binding FtpManager.ProgressValue}" Maximum="100"/>
+			</StatusBarItem>
+		</StatusBar>
+
+
 	</Grid>
 </Window>
