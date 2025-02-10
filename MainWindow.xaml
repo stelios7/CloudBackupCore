@@ -1,0 +1,62 @@
+﻿<Window x:Class="Cloud_Backup_Core.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Cloud_Backup_Core"
+        xmlns:converters="clr-namespace:Cloud_Backup_Core.Helpers"
+		xmlns:settings="clr-namespace:Cloud_Backup_Core.Views"
+        mc:Ignorable="d"
+        Title="Cloud Backup Core" Height="250" Width="350"
+		ResizeMode="CanResize"
+		
+		>
+	<Window.Resources>
+		<converters:BackupStatusToStringConverter x:Key="BackupStatusToStringConverter"/>
+		<converters:BackupStatusToBoolConverter x:Key="BackupStatusToBoolConverter" />
+		<converters:BackupStatusToVisibilityConverter x:Key="BackupStatusToVisibilityConverter" />
+		<converters:DoubleToStringConverter x:Key="DoubleToStringConverter" />
+	</Window.Resources>
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="20" />
+			<RowDefinition Height="*" />
+			<RowDefinition Height="20" />
+		</Grid.RowDefinitions>
+		<TextBox x:Name="RootPassword" Height="10" Width="50" HorizontalAlignment="Left"
+					 FontSize="6" AcceptsReturn="True" Grid.Row="0" Margin="5 0"
+					 Text="{Binding RootPassword, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+					 >
+			<TextBox.InputBindings>
+				<KeyBinding Key="Enter" Command="{Binding EnterPressed_command}" />
+			</TextBox.InputBindings>
+		</TextBox>
+		<StackPanel Grid.Row="1">
+			<StackPanel Grid.Column="0" Margin="5" Width="150">
+				<Button Content="Force Upload" Margin="5" Width="auto" Height="30"
+					Command="{Binding ForceUpload_command}"
+					Visibility="{Binding BackupStatus, Converter={StaticResource BackupStatusToVisibilityConverter}}"
+					IsEnabled="{Binding BackupStatus, Converter={StaticResource BackupStatusToBoolConverter}}"
+					Style="{StaticResource ResourceKey=StyledButton}"
+					/>
+				<Button Content="Start Sync" Margin="5" Width="auto" Height="30"
+					Command="{Binding StartSync_command}"
+					Style="{StaticResource ResourceKey=StyledButton}"
+					/>
+				<Button Content="Pause Sync" Margin="5" Width="auto" Height="30"
+					Command="{Binding PauseSync_command}"
+					Style="{StaticResource ResourceKey=StyledButton}"
+					/>
+			</StackPanel>
+		</StackPanel>
+		<StackPanel Orientation="Horizontal" Grid.Row="2" VerticalAlignment="Center" Margin="5 0">
+			<Label Padding="0" Margin="1 1 1 1" FontSize="12" HorizontalContentAlignment="Stretch" Width="auto" VerticalContentAlignment="Stretch" Content="Status:" />
+			<Label Padding="0" Margin="1 1 5 0" FontSize="12" HorizontalContentAlignment="Stretch" Width="60" VerticalContentAlignment="Stretch" 
+				   Content="{Binding BackupStatus, Converter={StaticResource BackupStatusToStringConverter}}" />
+			<Label Padding="0" Margin="0 1 5 0" FontSize="12" HorizontalContentAlignment="Stretch" Width="40" VerticalContentAlignment="Stretch" 
+				   Content="{Binding FtpUploader.UploadProgressString, UpdateSourceTrigger=PropertyChanged}"/>
+			<Label Padding="0" Margin="1 1 1 1" FontSize="12" HorizontalContentAlignment="Stretch" Width="auto" VerticalContentAlignment="Stretch" Content="Last sync:" />
+			<Label Padding="0" Margin="0 1 5 0" FontSize="12" HorizontalContentAlignment="Stretch" Width="120" VerticalContentAlignment="Stretch" Content="{Binding LastBackupTime}" />
+		</StackPanel>
+	</Grid>
+</Window>
