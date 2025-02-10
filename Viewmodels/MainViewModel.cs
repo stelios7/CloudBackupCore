@@ -36,20 +36,30 @@ namespace Cloud_Backup_Core.Viewmodels
             UPLOADING
         }
 
+        public FtpUploader FtpManager { get; }
         public MainViewModel()
         {
-            string filePath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "resources", "example.txt");
-            //string content = System.IO.File.ReadAllText(filePath);
+            FtpManager = FtpUploader.Instance;
             BackupStatus = BACKUP_STATUS.IDLE;
 
             BackupTimers = new List<DispatcherTimer>();
-
             RootDirectory = @"C:\Users\paokf\Documents\root_upload";
 
             SyncNow();
         }
 
         #region PROPERTIES DECLARATIONS
+
+        private string fbu;
+
+        public string FileBeingUploaded
+        {
+            get { return fbu; }
+            set { fbu = value; 
+                OnPropertyChanged(nameof(FileBeingUploaded));
+            }
+        }
+
 
         private string lastBackupTime;
         public string LastBackupTime
@@ -125,7 +135,7 @@ namespace Cloud_Backup_Core.Viewmodels
         {
             var timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromMinutes(240);
-            timer.Tick += async (o, s) => await FtpUploader.UploadFileFtp();
+            timer.Tick += async (o, s) => await FtpManager.UploadFileFtp();
             BackupTimers.Add(timer);
             timer.Start();
             BackupStatus = BACKUP_STATUS.ONLINE;
@@ -168,13 +178,13 @@ namespace Cloud_Backup_Core.Viewmodels
             {
                 if (item.IsUploadEnabled)
                 {
-
-                    BackupStatus = BACKUP_STATUS.UPLOADING;
                     var directoryName = item.SoftwareName;
                     var files = Directory.GetFiles(item.LocalPath);
                     foreach (var file in files)
                     {
-                        await FtpUploader.UploadFileFtp(file, item.SoftwareName, user)
+                        BackupStatus = BACKUP_STATUS.UPLOADING;
+                        FileBeingUploaded = Path.GetFileName(file);
+                        await FtpManager.UploadFileFtp(file, item.SoftwareName, user)
                             .ContinueWith(
                                 (o) =>
                                 {
@@ -209,11 +219,15 @@ namespace Cloud_Backup_Core.Viewmodels
 
         private void EnterPressed()
         {
-            Logger.Log("Settings timer started.", true);
+            if (RootPassword == "sld" || RootPassword == "SLD")
+            {
+                Logger.Log("Settings timer started.", true);
 
-            SettingsWindowView settingsWindow = new SettingsWindowView();
+                SettingsWindowView settingsWindow = new SettingsWindowView();
 
-            settingsWindow.ShowDialog();
+                settingsWindow.ShowDialog();
+            }
+            RootPassword = "";
         }
 
         #endregion
