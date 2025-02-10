@@ -1,0 +1,222 @@
+﻿using FluentFTP;
+using System.Collections.ObjectModel;
+using Cloud_Backup_Core.Helpers;
+using System.Windows;
+using System.Diagnostics;
+using System.IO;
+using System.Windows.Input;
+using System.Windows.Threading;
+using System.Text;
+using Cloud_Backup_Core;
+using System.Windows.Controls;
+using Cloud_Backup_Core.Views;
+using Cloud_Backup_Core.Models;
+using System.Security.Permissions;
+using System.Net.Mail;
+using FluentFTP.Helpers;
+
+namespace Cloud_Backup_Core.Viewmodels
+{
+    internal class MainViewModel : BaseViewModel
+    {
+        #region RELAY COMMANDS
+
+        public RelayCommand UploadFile_command => new RelayCommand(async execute => await FtpUploader.UploadFileFtp(), canExecute => true);
+        public RelayCommand EnterPressed_command => new RelayCommand(execute => EnterPressed(), canExecute => true);
+        public RelayCommand ForceUpload_command => new RelayCommand(execute => ForceUpload(), canExecute => true);
+        public RelayCommand StartSync_command => new RelayCommand(execute => StartSync(), canExecute => true);
+        public RelayCommand PauseSync_command => new RelayCommand(execute => PauseSync(), canExecute => true);
+
+        #endregion
+
+        public enum BACKUP_STATUS
+        {
+            IDLE,
+            ONLINE,
+            UPLOADING
+        }
+
+        public MainViewModel()
+        {
+            string filePath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "resources", "example.txt");
+            //string content = System.IO.File.ReadAllText(filePath);
+            BackupStatus = BACKUP_STATUS.IDLE;
+
+            BackupTimers = new List<DispatcherTimer>();
+
+            RootDirectory = @"C:\Users\paokf\Documents\root_upload";
+
+            SyncNow();
+        }
+
+        #region PROPERTIES DECLARATIONS
+
+        private string lastBackupTime;
+        public string LastBackupTime
+        {
+            get { return lastBackupTime; }
+            set
+            {
+                lastBackupTime = value;
+                OnPropertyChanged(nameof(LastBackupTime));
+            }
+        }
+
+
+        private BACKUP_STATUS backupStatus;
+        public BACKUP_STATUS BackupStatus
+        {
+            get { return backupStatus; }
+            set
+            {
+                backupStatus = value;
+                OnPropertyChanged(nameof(BackupStatus));
+            }
+        }
+
+        private List<DispatcherTimer> BackupTimers;
+        public string RootDirectory { get; set; }
+
+        private double upv;
+        public double UploadProgressValue
+        {
+            get { return upv; }
+            set
+            {
+                upv = value;
+                OnPropertyChanged(nameof(UploadProgressValue));
+            }
+        }
+
+        private string rootPassword;
+        public string RootPassword
+        {
+            get { return rootPassword; }
+            set
+            {
+                rootPassword = value;
+                OnPropertyChanged(RootPassword);
+            }
+        }
+
+        #endregion
+
+        #region FUNCTIONS
+
+        private string SetBackupStatus(BACKUP_STATUS status) => status switch
+        {
+            BACKUP_STATUS.IDLE => "Idle",
+            BACKUP_STATUS.ONLINE => "Online",
+            _ => "Error"
+        };
+
+        private void PauseSync()
+        {
+            foreach (var timer in BackupTimers)
+            {
+                timer.Stop();
+            }
+            BackupTimers.Clear();
+            BackupStatus = BACKUP_STATUS.IDLE;
+            Logger.Log("Backup paused", true);
+        }
+
+        private void StartSync()
+        {
+            var timer = new DispatcherTimer();
+            timer.Interval = TimeSpan.FromMinutes(240);
+            timer.Tick += async (o, s) => await FtpUploader.UploadFileFtp();
+            BackupTimers.Add(timer);
+            timer.Start();
+            BackupStatus = BACKUP_STATUS.ONLINE;
+
+            Task.Run(() => SyncNow())
+                .ContinueWith(_ => BackupStatus = BACKUP_STATUS.IDLE);
+            Logger.Log("Start syncing.", true);
+        }
+
+        private async Task SyncNow()
+        {
+            var uSfuel = Properties.Settings.Default.UploadSfuel;
+            var uLpg = Properties.Settings.Default.UploadLpg;
+            var uSoftruck = Properties.Settings.Default.UploadSoftruck;
+            var uUpsales = Properties.Settings.Default.UploadUpsales;
+
+            var pSfuel = uSfuel ? Properties.Settings.Default.SfuelLocalFilepath : "";
+            var pLpg = uLpg ? Properties.Settings.Default.LpgLocalFilePath : "";
+            var pSoftruck = uSoftruck ? Properties.Settings.Default.SoftruckLocalFilePath : "";
+            var pUpsales = uUpsales ? Properties.Settings.Default.UpsalesLocalFilePath : "";
+
+            var user = Properties.Settings.Default.SoftwareName;
+            List<string> ToBeUploaded = new List<string>();
+            UserSettings us = new UserSettings(user)
+            {
+                UploadSettings = {
+                    new UploadSetting(uSfuel, "Sfuel", pSfuel),
+                    new UploadSetting(uLpg, "LpgRetail", pLpg),
+                    new UploadSetting(uSoftruck, "Softruck", pSoftruck),
+                    new UploadSetting(uUpsales, "Upsales", pUpsales)
+                }
+            };
+
+            if (uSfuel && File.Exists(pSfuel)) ToBeUploaded.Add(pSfuel);
+            if (uLpg && File.Exists(pLpg)) ToBeUploaded.Add(pLpg);
+            if (uSoftruck && File.Exists(pSoftruck)) ToBeUploaded.Add(pSoftruck);
+            if (uUpsales && File.Exists(pUpsales)) ToBeUploaded.Add(pUpsales);
+
+            foreach (var item in us.UploadSettings)
+            {
+                if (item.IsUploadEnabled)
+                {
+
+                    BackupStatus = BACKUP_STATUS.UPLOADING;
+                    var directoryName = item.SoftwareName;
+                    var files = Directory.GetFiles(item.LocalPath);
+                    foreach (var file in files)
+                    {
+                        await FtpUploader.UploadFileFtp(file, item.SoftwareName, user)
+                            .ContinueWith(
+                                (o) =>
+                                {
+                                    BackupStatus = BACKUP_STATUS.IDLE;
+                                    Logger.Log($"Upload successful: {item.LocalPath}", true);
+                                }
+                                )
+                            .ContinueWith(_ => FileMover.MoveFile(file));
+                    }
+                }
+            }
+        }
+
+        public void RootPasswordChanged(object sender, TextChangedEventArgs e)
+        {
+            Debug.WriteLine(e.ToString());
+        }
+
+        private void ForceUpload()
+        {
+            var settings = Properties.Settings.Default;
+            StringBuilder s = new StringBuilder();
+            s.AppendLine($"Sfuel: {settings.SfuelLocalFilepath}");
+            s.AppendLine($"Lpg: {settings.LpgLocalFilePath}");
+            s.AppendLine($"Softruck: {settings.SoftruckLocalFilePath}");
+            s.AppendLine($"Upsales: {settings.UpsalesLocalFilePath}");
+
+            LastBackupTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+            SyncNow();
+            Logger.Log(s.ToString(), true);
+        }
+
+        private void EnterPressed()
+        {
+            Logger.Log("Settings timer started.", true);
+
+            SettingsWindowView settingsWindow = new SettingsWindowView();
+
+            settingsWindow.ShowDialog();
+        }
+
+        #endregion
+
+    }
+}
