@@ -7,8 +7,10 @@
         xmlns:converters="clr-namespace:Cloud_Backup_Core.Helpers"
 		xmlns:settings="clr-namespace:Cloud_Backup_Core.Views"
         mc:Ignorable="d"
-        Title="Cloud Backup Core" Height="250" Width="300"
-		ResizeMode="NoResize"
+        Title="Cloud Backup Core" Height="250" Width="300" 
+		MaxHeight="300" MaxWidth="350"
+		MinHeight="250" MinWidth="300"
+		ResizeMode="CanResize"
 		
 		>
 	<Window.Resources>
@@ -16,6 +18,14 @@
 		<converters:BackupStatusToBoolConverter x:Key="BackupStatusToBoolConverter" />
 		<converters:BackupStatusToVisibilityConverter x:Key="BackupStatusToVisibilityConverter" />
 		<converters:DoubleToStringConverter x:Key="DoubleToStringConverter" />
+		<Style TargetType="Label" >
+			<Setter Property="Margin" Value="0" />
+			<Setter Property="Padding" Value="0" />
+			<Setter Property="VerticalContentAlignment" Value="Center" />
+			<Setter Property="FontSize" Value="12" />
+			<Setter Property="HorizontalContentAlignment" Value="Stretch" />
+		</Style>
+
 	</Window.Resources>
 	<Grid>
 		<Grid.RowDefinitions>
@@ -25,14 +35,17 @@
 			<RowDefinition Height="25" />
 			<RowDefinition Height="15" />
 		</Grid.RowDefinitions>
-		<TextBox x:Name="RootPassword" Height="10" Width="50" HorizontalAlignment="Left"
-					 FontSize="6" AcceptsReturn="True" Grid.Row="0" Margin="5 0"
-					 Text="{Binding RootPassword, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-					 >
-			<TextBox.InputBindings>
-				<KeyBinding Key="Enter" Command="{Binding EnterPressed_command}" />
-			</TextBox.InputBindings>
-		</TextBox>
+		<StackPanel Orientation="Horizontal" Grid.Row="0">
+			<TextBox x:Name="RootPassword" Height="10" Width="50" HorizontalAlignment="Left"
+						 FontSize="6" AcceptsReturn="True" Grid.Row="0" Margin="5 0"
+						 Text="{Binding RootPassword, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+						 >
+				<TextBox.InputBindings>
+					<KeyBinding Key="Enter" Command="{Binding EnterPressed_command}" />
+				</TextBox.InputBindings>
+			</TextBox>
+			<Label Content="" />
+		</StackPanel>
 		<StackPanel Grid.Row="1">
 			<StackPanel Grid.Column="0" Margin="5" Width="150">
 				<Button Content="Force Upload" Margin="5" Width="auto" Height="30"
@@ -66,20 +79,18 @@
 						Text="{Binding FileBeingUploaded, UpdateSourceTrigger=PropertyChanged}"/>
 			</StatusBarItem>
 		</StatusBar>
-		
+
 		<StatusBar Grid.Row="3" Padding="0" Margin="0">
 			<StackPanel Orientation="Horizontal" VerticalAlignment="Center" >
-				<Label Margin="0 0" Padding="0" FontSize="12" HorizontalContentAlignment="Stretch" Width="auto" VerticalContentAlignment="Stretch" Content="Last sync:" />
-				<Label Margin="5 0" Padding="0" FontSize="12" HorizontalContentAlignment="Stretch" Width="120" VerticalContentAlignment="Stretch" Content="{Binding LastBackupTime}" />
+				<Label Width="auto" Content="Last sync:" />
+				<Label Margin="5 0" Width="120" Content="{Binding LastBackupTime}" />
 			</StackPanel>
 		</StatusBar>
 
 		<StatusBar Grid.Row="4" Padding="0" Margin="0">
 			<StatusBarItem HorizontalAlignment="Center" Padding="0" Margin="0">
-				<ProgressBar Margin="0" Padding="0" Height="10" Width="250" Value="{Binding FtpManager.ProgressValue}" Maximum="100"/>
+				<ProgressBar Margin="0" Padding="0" Height="10" Width="295" Value="{Binding FtpManager.ProgressValue}" Maximum="100"/>
 			</StatusBarItem>
 		</StatusBar>
-
-
 	</Grid>
 </Window>

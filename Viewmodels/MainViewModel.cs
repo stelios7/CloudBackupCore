@@ -1,19 +1,11 @@
-﻿using FluentFTP;
-using System.Collections.ObjectModel;
-using Cloud_Backup_Core.Helpers;
-using System.Windows;
+﻿using Cloud_Backup_Core.Helpers;
 using System.Diagnostics;
 using System.IO;
-using System.Windows.Input;
 using System.Windows.Threading;
 using System.Text;
-using Cloud_Backup_Core;
 using System.Windows.Controls;
 using Cloud_Backup_Core.Views;
 using Cloud_Backup_Core.Models;
-using System.Security.Permissions;
-using System.Net.Mail;
-using FluentFTP.Helpers;
 
 namespace Cloud_Backup_Core.Viewmodels
 {
@@ -28,13 +20,6 @@ namespace Cloud_Backup_Core.Viewmodels
         public RelayCommand PauseSync_command => new RelayCommand(execute => PauseSync(), canExecute => true);
 
         #endregion
-
-        public enum BACKUP_STATUS
-        {
-            IDLE,
-            ONLINE,
-            UPLOADING
-        }
 
         public FtpUploader FtpManager { get; }
         public MainViewModel()
@@ -108,9 +93,15 @@ namespace Cloud_Backup_Core.Viewmodels
                 OnPropertyChanged(RootPassword);
             }
         }
+        public enum BACKUP_STATUS
+        {
+            IDLE,
+            ONLINE,
+            UPLOADING
+        }
 
+        
         #endregion
-
         #region FUNCTIONS
 
         private string SetBackupStatus(BACKUP_STATUS status) => status switch
