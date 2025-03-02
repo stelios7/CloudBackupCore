@@ -4,7 +4,11 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
 -->
 <Project>
   <PropertyGroup>
+<<<<<<< HEAD
     <History>True|2025-02-21T07:02:08.3105230Z;</History>
+=======
+    <History>True|2025-02-12T05:00:40.3419671Z;</History>
+>>>>>>> 42d51e4 (Add updater functionality, check FTP file for updates and downlod zip if needed. Extract and restart application)
     <LastFailureDetails />
   </PropertyGroup>
 </Project>
