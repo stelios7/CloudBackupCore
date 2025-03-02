@@ -11,28 +11,55 @@
 		MaxHeight="300" MaxWidth="350"
 		MinHeight="250" MinWidth="300"
 		ResizeMode="CanResize"
-		
+		Background="#DCD7C9"
 		>
 	<Window.Resources>
+		<!--	Status Bar	Background #D6BD98	-->
+		<!--	Status Bar	Foreground #2C3930	-->
+		<!--	Label		Background #DCD7C9	-->
+		<!--	Window		Background #DCD7C9	-->
+		
 		<converters:BackupStatusToStringConverter x:Key="BackupStatusToStringConverter"/>
 		<converters:BackupStatusToBoolConverter x:Key="BackupStatusToBoolConverter" />
 		<converters:BackupStatusToVisibilityConverter x:Key="BackupStatusToVisibilityConverter" />
 		<converters:DoubleToStringConverter x:Key="DoubleToStringConverter" />
-		<Style TargetType="Label" >
+		<Style TargetType="Label" x:Key="MainLabel">
 			<Setter Property="Margin" Value="0" />
 			<Setter Property="Padding" Value="0" />
 			<Setter Property="VerticalContentAlignment" Value="Center" />
 			<Setter Property="FontSize" Value="12" />
 			<Setter Property="HorizontalContentAlignment" Value="Stretch" />
+			<Setter Property="Background" Value="#DCD7C9" />
 		</Style>
+		<Style TargetType="Label" x:Key="StatusLabel">
+			<Setter Property="Margin" Value="0" />
+			<Setter Property="Padding" Value="0" />
+			<Setter Property="VerticalContentAlignment" Value="Center" />
+			<Setter Property="HorizontalContentAlignment" Value="Stretch" />
+		</Style>
+
+		<!--	Status Bar	Background #D6BD98	-->
+		<!--	Status Bar	Foreground #2C3930	-->
+		<!--	Label		Background #DCD7C9	-->
+		<!--	Window		Background #DCD7C9	-->
+		
+		<Style TargetType="StatusBar">
+			<Setter Property="Background" Value="#D6BD98" />
+			<Setter Property="FontSize" Value="8" />
+			<Setter Property="Foreground" Value="#2C3930" />
+			<Setter Property="Margin" Value="0" />
+			<Setter Property="Padding" Value="0" />
+			<!--<Setter Property="Height" Value="20" />-->
+		</Style>
+		
 
 	</Window.Resources>
 	<Grid>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="20" />
 			<RowDefinition Height="*" />
-			<RowDefinition Height="25" />
-			<RowDefinition Height="25" />
+			<RowDefinition Height="15" />
+			<RowDefinition Height="15" />
 			<RowDefinition Height="15" />
 		</Grid.RowDefinitions>
 		<StackPanel Orientation="Horizontal" Grid.Row="0">
@@ -65,31 +92,36 @@
 			</StackPanel>
 		</StackPanel>
 
-		<StatusBar Grid.Row="2" Padding="0" Margin="0">
+		<StatusBar Grid.Row="2" >
 			<StatusBarItem>
-				<TextBlock Text="Status:" VerticalAlignment="center" FontSize="11"/>
+				<TextBlock Text="Status:" VerticalAlignment="center" />
 			</StatusBarItem>
 
-			<StatusBar Padding="0" Margin="0">
-				<TextBlock Padding="0" Margin="0" FontSize="11" VerticalAlignment="Center" Width="auto"
+			<StatusBarItem>
+				<TextBlock VerticalAlignment="Center" Width="auto"
 					Text="{Binding BackupStatus, Converter={StaticResource BackupStatusToStringConverter}}" />
-			</StatusBar>
+			</StatusBarItem>
+			
 			<StatusBarItem Name="FileBeingUploaded">
-				<TextBlock Padding="0" FontSize="11" Width="auto" VerticalAlignment="Center" 
+				<TextBlock Width="auto" VerticalAlignment="Center" 
 						Text="{Binding FileBeingUploaded, UpdateSourceTrigger=PropertyChanged}"/>
 			</StatusBarItem>
 		</StatusBar>
 
-		<StatusBar Grid.Row="3" Padding="0" Margin="0">
-			<StackPanel Orientation="Horizontal" VerticalAlignment="Center" >
-				<Label Width="auto" Content="Last sync:" />
-				<Label Margin="5 0" Width="120" Content="{Binding LastBackupTime}" />
-			</StackPanel>
+		<StatusBar Grid.Row="3" >
+			<StatusBarItem>
+				<TextBlock Width="auto" Text="Last sync:" />
+			</StatusBarItem>
+
+			<StatusBarItem>
+				<TextBlock Margin="5 0" Width="120" Text="{Binding LastBackupTime}" />
+			</StatusBarItem>
 		</StatusBar>
 
 		<StatusBar Grid.Row="4" Padding="0" Margin="0">
 			<StatusBarItem HorizontalAlignment="Center" Padding="0" Margin="0">
-				<ProgressBar Margin="0" Padding="0" Height="10" Width="295" Value="{Binding FtpManager.ProgressValue}" Maximum="100"/>
+				<ProgressBar Width="295" Value="{Binding FtpManager.ProgressValue}" Maximum="100"
+							 Height="10"/>
 			</StatusBarItem>
 		</StatusBar>
 	</Grid>

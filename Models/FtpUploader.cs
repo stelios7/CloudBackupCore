@@ -79,14 +79,12 @@ namespace Cloud_Backup_Core.Models
 
         private readonly string remoteDirectory;
 
-        public async Task UploadFileFtp(string? file_to_upload = null, string? where = "test", string? who = "test")
+        public async Task UploadFileFtp(CancellationToken token, string? where, string? who, string? file_to_upload = null )
         {
             try
             {
                 string localFilePath = file_to_upload ?? @"C:\Users\paokf\Documents\caesium-image-compressor-2.1.0-win.zip";
                 string remoteFilePath = $"/CLOUDBACKUP/{where}/{who}/{Path.GetFileName(localFilePath)}";
-                var cts = new CancellationTokenSource();
-                var token = cts.Token;
                 var isUploadCompleted = false;
 
                 Progress<FtpProgress> progress = new Progress<FtpProgress>(p =>

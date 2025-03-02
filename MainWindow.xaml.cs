@@ -28,7 +28,7 @@ namespace Cloud_Backup_Core
         public MainWindow()
         {
             CreateNecessaryData();
-            InitializeComponent();
+            //InitializeComponent();
             SetupTrayIcon();
             CreateTimers();
 
@@ -45,7 +45,8 @@ namespace Cloud_Backup_Core
         }
         private void CreateNecessaryData()
         {
-            if (!Directory.Exists("C:\\Users\\paokf\\AppData\\Local\\Cloud_Backup_Core\\update"))
+            
+            if (!Directory.Exists(System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Cloud_Backup_Core", "update")))
             {
                 Directory.CreateDirectory("C:\\Users\\paokf\\AppData\\Local\\Cloud_Backup_Core\\update");
                 Debug.Print("%LOCALAPPDATA% OK!");

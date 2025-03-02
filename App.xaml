@@ -4,13 +4,21 @@
              xmlns:local="clr-namespace:Cloud_Backup_Core"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
+		<!-- Status Bar	Background	#D6BD98	-->
+		<!-- Status Bar	Foreground	#2C3930	-->
+		<!-- Label		Background	#DCD7C9	-->
+		<!-- Window		Background	#DCD7C9	-->
+		<!-- Button		Background	#677D6A	-->
+		<!-- Button		Foreground	#DCD7C9	-->
+		<!-- Button		BorderBrush	#D6BD98	-->
+		
 		<Style TargetType="Button" x:Key="StyledButton">
-			<Setter Property="Background" Value="LightGray"/>
-			<Setter Property="Foreground" Value="Black"/>
+			<Setter Property="Background" Value="#677D6A"/>
+			<Setter Property="Foreground" Value="#DCD7C9"/>
 			<Setter Property="FontSize" Value="14"/>
 			<Setter Property="Padding" Value="10"/>
-			<Setter Property="BorderThickness" Value="2"/>
-			<Setter Property="BorderBrush" Value="DarkGray"/>
+			<Setter Property="BorderThickness" Value="1"/>
+			<Setter Property="BorderBrush" Value="#D6BD98"/>
 			<Setter Property="Cursor" Value="Hand" />
 			<Setter Property="Template">
 				<Setter.Value>
@@ -23,11 +31,11 @@
 						</Border>
 						<ControlTemplate.Triggers>
 							<Trigger Property="IsMouseOver" Value="True">
-								<Setter Property="Background" Value="#DA498D"/>
+								<Setter Property="Background" Value="#1A3636"/>
 							</Trigger>
 							<Trigger Property="IsPressed" Value="True">
-								<Setter Property="Background" Value="#69247C"/>
-								<Setter Property="Foreground" Value="#F9E6CF"/>
+								<Setter Property="Background" Value="#2C3930"/>
+								<Setter Property="Foreground" Value="#D6BD98"/>
 								<Setter Property="FontWeight" Value="Bold" />
 							</Trigger>
 						</ControlTemplate.Triggers>
