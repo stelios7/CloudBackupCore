@@ -13,7 +13,7 @@ namespace Cloud_Backup_Core.Viewmodels
     {
         #region RELAY COMMANDS
 
-        public RelayCommand UploadFile_command => new RelayCommand(async execute => await FtpUploader.UploadFileFtp(), canExecute => true);
+        //public RelayCommand UploadFile_command => new RelayCommand(async execute => await FtpUploader.UploadFileFtp(), canExecute => true);
         public RelayCommand EnterPressed_command => new RelayCommand(execute => EnterPressed(), canExecute => true);
         public RelayCommand ForceUpload_command => new RelayCommand(execute => ForceUpload(), canExecute => true);
         public RelayCommand StartSync_command => new RelayCommand(execute => StartSync(), canExecute => true);
@@ -22,10 +22,12 @@ namespace Cloud_Backup_Core.Viewmodels
         #endregion
 
         public FtpUploader FtpManager { get; }
+        private List<CancellationTokenSource> UploadTokens { get; set; }
         public MainViewModel()
         {
             FtpManager = FtpUploader.Instance;
             BackupStatus = BACKUP_STATUS.IDLE;
+            UploadTokens = new List<CancellationTokenSource>();
 
             BackupTimers = new List<DispatcherTimer>();
             RootDirectory = @"C:\Users\paokf\Documents\root_upload";
@@ -84,6 +86,8 @@ namespace Cloud_Backup_Core.Viewmodels
         }
 
         private string rootPassword;
+        private List<string> ToBeUploaded;
+
         public string RootPassword
         {
             get { return rootPassword; }
@@ -118,6 +122,12 @@ namespace Cloud_Backup_Core.Viewmodels
                 timer.Stop();
             }
             BackupTimers.Clear();
+            ToBeUploaded.Clear();
+            foreach (var cts in UploadTokens)
+            {
+                cts.Cancel();
+            }
+            UploadTokens.Clear();
             BackupStatus = BACKUP_STATUS.IDLE;
             Logger.Log("Backup paused", true);
         }
@@ -126,7 +136,7 @@ namespace Cloud_Backup_Core.Viewmodels
         {
             var timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromMinutes(240);
-            timer.Tick += async (o, s) => await FtpManager.UploadFileFtp();
+            timer.Tick += async (o, s) => await SyncNow();
             BackupTimers.Add(timer);
             timer.Start();
             BackupStatus = BACKUP_STATUS.ONLINE;
@@ -149,7 +159,7 @@ namespace Cloud_Backup_Core.Viewmodels
             var pUpsales = uUpsales ? Properties.Settings.Default.UpsalesLocalFilePath : "";
 
             var user = Properties.Settings.Default.SoftwareName;
-            List<string> ToBeUploaded = new List<string>();
+            ToBeUploaded = new List<string>();
             UserSettings us = new UserSettings(user)
             {
                 UploadSettings = {
@@ -175,7 +185,9 @@ namespace Cloud_Backup_Core.Viewmodels
                     {
                         BackupStatus = BACKUP_STATUS.UPLOADING;
                         FileBeingUploaded = Path.GetFileName(file);
-                        await FtpManager.UploadFileFtp(file, item.SoftwareName, user)
+                        var cts = new CancellationTokenSource();
+                        UploadTokens.Add(cts);
+                        await FtpManager.UploadFileFtp(cts.Token, file, item.SoftwareName, user)
                             .ContinueWith(
                                 (o) =>
                                 {

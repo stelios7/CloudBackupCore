@@ -8,7 +8,15 @@
         Title="Ρυθμίσεις" Height="230" Width="350"
 		WindowStartupLocation="CenterScreen"
 		WindowStyle="ToolWindow"
+		Background="#DCD7C9"
 		>
+	<!-- Status Bar	Background	#D6BD98	-->
+	<!-- Status Bar	Foreground	#2C3930	-->
+	<!-- Label		Background	#DCD7C9	-->
+	<!-- Window		Background	#DCD7C9	-->
+	<!-- Button		Background	#677D6A	-->
+	<!-- Button		Foreground	#DCD7C9	-->
+	<!-- Button		BorderBrush	#D6BD98	-->
 	<Grid>
 		<DockPanel LastChildFill="True" Margin="10">
 			<StackPanel Orientation="Vertical" DockPanel.Dock="Left">
