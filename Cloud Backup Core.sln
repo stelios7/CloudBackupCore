@@ -5,11 +5,7 @@ VisualStudioVersion = 17.9.34723.18
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cloud Backup Core", "Cloud Backup Core.csproj", "{18CEF72F-60EF-4165-A4B5-6252564C6415}"
 EndProject
-<<<<<<< HEAD
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CloudUpdater", "..\CloudUpdater\CloudUpdater.csproj", "{2E7E8942-F0BC-4903-B155-80485F69107E}"
-=======
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CloudUpdater", "..\CloudUpdater\CloudUpdater.csproj", "{1841F5F6-1723-49E3-B288-5C303100D059}"
->>>>>>> 42d51e4 (Add updater functionality, check FTP file for updates and downlod zip if needed. Extract and restart application)
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CloudUpdater", "..\CloudUpdater\CloudUpdater.csproj", "{2E7E8942-F0BC-4903-B155-80485F69107E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,17 +17,10 @@ Global
 		{18CEF72F-60EF-4165-A4B5-6252564C6415}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{18CEF72F-60EF-4165-A4B5-6252564C6415}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{18CEF72F-60EF-4165-A4B5-6252564C6415}.Release|Any CPU.Build.0 = Release|Any CPU
-<<<<<<< HEAD
 		{2E7E8942-F0BC-4903-B155-80485F69107E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2E7E8942-F0BC-4903-B155-80485F69107E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2E7E8942-F0BC-4903-B155-80485F69107E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2E7E8942-F0BC-4903-B155-80485F69107E}.Release|Any CPU.Build.0 = Release|Any CPU
-=======
-		{1841F5F6-1723-49E3-B288-5C303100D059}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1841F5F6-1723-49E3-B288-5C303100D059}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1841F5F6-1723-49E3-B288-5C303100D059}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1841F5F6-1723-49E3-B288-5C303100D059}.Release|Any CPU.Build.0 = Release|Any CPU
->>>>>>> 42d51e4 (Add updater functionality, check FTP file for updates and downlod zip if needed. Extract and restart application)
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

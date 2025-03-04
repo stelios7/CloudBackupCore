@@ -23,7 +23,7 @@
 					  DockPanel.Dock="Left" Margin="0" Width="80" FontSize="14"
                       VerticalAlignment="Center" 
 					  IsChecked="{Binding UploadEnabled}"
-					  Foreground="#677D6A"
+					  Foreground="#2C3930"
 				/>
 
 			<!-- TextBox -->
@@ -32,7 +32,7 @@
 				<TextBox x:Name="PathTextBox" IsEnabled="{Binding IsChecked, ElementName=EnableCheckbox}" FontSize="9"
 						 Height="30" VerticalAlignment="Center"
 						 VerticalContentAlignment="Center" 
-                         Foreground="#677D6A" 
+                         Foreground="#2C3930" 
 						 Background="Transparent"
                          BorderThickness="0" Padding="0" 
 						 Text="{Binding LocalPath, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"

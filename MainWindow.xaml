@@ -62,15 +62,27 @@
 			<RowDefinition Height="15" />
 			<RowDefinition Height="15" />
 		</Grid.RowDefinitions>
+		<Menu Background="#D6BD98" Height="10" Grid.Row="0">
+			
+		</Menu>
 		<StackPanel Orientation="Horizontal" Grid.Row="0">
-			<TextBox x:Name="RootPassword" Height="10" Width="50" HorizontalAlignment="Left"
-						 FontSize="6" AcceptsReturn="True" Grid.Row="0" Margin="5 0"
+			<Border Width="40" CornerRadius="5" BorderBrush="#D6BD98" BorderThickness="1" Margin="2"
+					Background="White"
+					Height="10">
+				<TextBox FontSize="6"
+						 AcceptsReturn="True"
+						 Height="auto" VerticalAlignment="Center"
+						 VerticalContentAlignment="Center" 
+                         Foreground="#677D6A" 
+						 Background="Transparent"
+                         BorderThickness="0" Padding="0" 
 						 Text="{Binding RootPassword, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
 						 >
-				<TextBox.InputBindings>
-					<KeyBinding Key="Enter" Command="{Binding EnterPressed_command}" />
-				</TextBox.InputBindings>
-			</TextBox>
+					<TextBox.InputBindings>
+						<KeyBinding Key="Enter" Command="{Binding EnterPressed_command}" />
+					</TextBox.InputBindings>
+				</TextBox>
+			</Border>
 			<Label Content="" />
 		</StackPanel>
 		<StackPanel Grid.Row="1">
@@ -110,7 +122,7 @@
 
 		<StatusBar Grid.Row="3" >
 			<StatusBarItem>
-				<TextBlock Width="auto" Text="Last sync:" />
+				<TextBlock Width="auto" Text="Last sync:" VerticalAlignment="Center" />
 			</StatusBarItem>
 
 			<StatusBarItem>
@@ -120,8 +132,13 @@
 
 		<StatusBar Grid.Row="4" Padding="0" Margin="0">
 			<StatusBarItem HorizontalAlignment="Center" Padding="0" Margin="0">
-				<ProgressBar Width="295" Value="{Binding FtpManager.ProgressValue}" Maximum="100"
-							 Height="10"/>
+				<Border Width="300" CornerRadius="5" BorderBrush="#D6BD98" BorderThickness="1" Margin="2"
+					Background="White">
+					<ProgressBar Value="{Binding FtpManager.ProgressValue}" Maximum="100"
+							 Height="10"
+								 Background="Transparent"
+								 />
+				</Border>
 			</StatusBarItem>
 		</StatusBar>
 	</Grid>

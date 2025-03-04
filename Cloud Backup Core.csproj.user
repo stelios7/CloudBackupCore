@@ -1,33 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <PropertyGroup>
-<<<<<<< HEAD
-    <_LastSelectedProfileId>C:\Users\seldi\Documents\2.Stelios\dotnet\Studio\Cloud Backup Core\Properties\PublishProfiles\FolderProfile1.pubxml</_LastSelectedProfileId>
-=======
-    <_LastSelectedProfileId>C:\Users\paokf\Documents\Code\C#\_GIT\CloudBackupCore\Properties\PublishProfiles\FolderProfile.pubxml</_LastSelectedProfileId>
->>>>>>> 42d51e4 (Add updater functionality, check FTP file for updates and downlod zip if needed. Extract and restart application)
-  </PropertyGroup>
+  <PropertyGroup />
   <ItemGroup>
-    <ApplicationDefinition Update="App.xaml">
-      <SubType>Designer</SubType>
-    </ApplicationDefinition>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Update="Views\SettingsWindowView.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Update="Views\uc_SettingsItem.xaml.cs">
+    <Compile Update="Views\BackupManagerView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Page Update="MainWindow.xaml">
+    <Page Update="Styles\AppStyles.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Views\SettingsWindowView.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Views\uc_SettingsItem.xaml">
+    <Page Update="Views\BackupManagerView.xaml">
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
