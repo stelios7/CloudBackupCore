@@ -150,6 +150,5 @@ namespace Cloud_Backup_Core
             base.OnClosed(e);
         }
 
-
     }
 }

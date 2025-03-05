@@ -8,10 +8,7 @@
 		xmlns:settings="clr-namespace:Cloud_Backup_Core.Views"
         mc:Ignorable="d"
         Title="Cloud Backup Core" Height="250" Width="300" 
-		MaxHeight="300" MaxWidth="350"
-		MinHeight="250" MinWidth="300"
-		ResizeMode="CanResize"
-		Background="#DCD7C9"
+		Style="{StaticResource MainWindowStyle}"
 		>
 	<Window.Resources>
 		<!--	Status Bar	Background #D6BD98	-->
@@ -62,9 +59,6 @@
 			<RowDefinition Height="15" />
 			<RowDefinition Height="15" />
 		</Grid.RowDefinitions>
-		<Menu Background="#D6BD98" Height="10" Grid.Row="0">
-			
-		</Menu>
 		<StackPanel Orientation="Horizontal" Grid.Row="0">
 			<Border Width="40" CornerRadius="5" BorderBrush="#D6BD98" BorderThickness="1" Margin="2"
 					Background="White"
@@ -83,7 +77,10 @@
 					</TextBox.InputBindings>
 				</TextBox>
 			</Border>
-			<Label Content="" />
+			<Button Content="SQL Backup"
+					Command="{Binding ShowBackup_command}"
+					Style="{StaticResource MenuBarButton}" 
+					/>
 		</StackPanel>
 		<StackPanel Grid.Row="1">
 			<StackPanel Grid.Column="0" Margin="5" Width="150">

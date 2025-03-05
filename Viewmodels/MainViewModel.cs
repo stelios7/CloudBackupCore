@@ -14,6 +14,17 @@ namespace Cloud_Backup_Core.Viewmodels
         #region RELAY COMMANDS
 
         //public RelayCommand UploadFile_command => new RelayCommand(async execute => await FtpUploader.UploadFileFtp(), canExecute => true);
+        public RelayCommand ShowBackup_command => new RelayCommand(execute => ShowBackupForm(), canExecute => true);
+
+        private void ShowBackupForm()
+        {
+            BackupViewModel bvm = new BackupViewModel();
+            BackupManagerView backupManagerView = new BackupManagerView();
+            backupManagerView.DataContext = bvm;
+            backupManagerView.ShowDialog();
+            
+        }
+
         public RelayCommand EnterPressed_command => new RelayCommand(execute => EnterPressed(), canExecute => true);
         public RelayCommand ForceUpload_command => new RelayCommand(execute => ForceUpload(), canExecute => true);
         public RelayCommand StartSync_command => new RelayCommand(execute => StartSync(), canExecute => true);

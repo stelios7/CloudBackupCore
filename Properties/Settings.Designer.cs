@@ -130,5 +130,53 @@ namespace Cloud_Backup_Core.Properties {
                 this["SoftwareName"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string SQLDatabaseBackupPath {
+            get {
+                return ((string)(this["SQLDatabaseBackupPath"]));
+            }
+            set {
+                this["SQLDatabaseBackupPath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("00:00:00")]
+        public global::System.TimeSpan SQLDatabaseBackupScheduleTime {
+            get {
+                return ((global::System.TimeSpan)(this["SQLDatabaseBackupScheduleTime"]));
+            }
+            set {
+                this["SQLDatabaseBackupScheduleTime"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string SQLDatabaseForBackup {
+            get {
+                return ((string)(this["SQLDatabaseForBackup"]));
+            }
+            set {
+                this["SQLDatabaseForBackup"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string SQLServerInstance {
+            get {
+                return ((string)(this["SQLServerInstance"]));
+            }
+            set {
+                this["SQLServerInstance"] = value;
+            }
+        }
     }
 }
