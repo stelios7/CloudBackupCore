@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime;
 using System.Text;
 using System.Threading.Tasks;
+using Quartz;
+using Quartz.Impl;
 using Cloud_Backup_Core.Helpers;
 using Cloud_Backup_Core.Models;
 
@@ -10,11 +13,23 @@ namespace Cloud_Backup_Core.Viewmodels
 {
     internal class BackupViewModel : BaseViewModel
     {
+        private IScheduler _scheduler;
         private readonly SqlBackupService _backupService;
         private BackupModel _backupModel;
         private string _statusMessage;
         private bool _isBackingUp;
         private string _sqlServerName;
+
+        private string _scheduledTime = "10:00";
+
+        public string ScheduledTime
+        {
+            get { return _scheduledTime; }
+            set { _scheduledTime = value; 
+                OnPropertyChanged(nameof(ScheduledTime));
+            }
+        }
+
 
         public string SqlServerName
         {
@@ -34,14 +49,29 @@ namespace Cloud_Backup_Core.Viewmodels
 
         public BackupViewModel()
         {
-            _backupService = new SqlBackupService("");
+            _backupService = new SqlBackupService(@$"Server={Properties.Settings.Default.SQLServerInstance};Database={Properties.Settings.Default.SQLDatabaseForBackup};Trusted_Connection=True;");
             _backupModel = new BackupModel();
+
             BackupCommand = new RelayCommand(execute => ExecuteBackup(), canExecute => CanExecuteBackup());
             BrowseCommand = new RelayCommand(execute => BrowseBackupFolder(), canExecute => true);
             SetScheduleCommand = new RelayCommand(execute => SetScheduleForBackup(), canExecute => true);
             SaveBackupSettingsCommand = new RelayCommand(execute => SaveBackupSettings(), canExecute => CanExecuteBackup());
 
+
+            InitializeScheduler();
             LoadSettings();
+        }
+
+        private async void InitializeScheduler()
+        {
+            _scheduler = await StdSchedulerFactory.GetDefaultScheduler();
+            await _scheduler.Start();
+
+            // Reschedule the job if a schedule exists
+            if (!string.IsNullOrWhiteSpace(ScheduledTime))
+            {
+                SetScheduleForBackup();
+            }
         }
 
         private void SaveBackupSettings()
@@ -61,12 +91,35 @@ namespace Cloud_Backup_Core.Viewmodels
             BackupFolder = settings.SQLDatabaseBackupPath;
             DatabaseName = settings.SQLDatabaseForBackup;
             SqlServerName = settings.SQLServerInstance;
-            
+            ScheduledTime = settings.SQLDatabaseBackupScheduleTime.ToString("HH:mm");
         }
 
-        private void SetScheduleForBackup()
+        private async void SetScheduleForBackup()
         {
-            throw new NotImplementedException();
+            await _scheduler.Clear(); // Clear existing jobs before rescheduling
+
+            if (TimeSpan.TryParse(ScheduledTime, out TimeSpan scheduleTime))
+            {
+                var job = JobBuilder.Create<BackupJob>()
+                    .WithIdentity("BackupJob")
+                    .Build();
+
+                job.JobDataMap["BackupService"] = _backupService;
+                job.JobDataMap["DatabaseName"] = DatabaseName;
+                job.JobDataMap["BackupFolder"] = BackupFolder;
+
+                var trigger = TriggerBuilder.Create()
+                    .WithIdentity("BackupTrigger")
+                    .WithSchedule(CronScheduleBuilder.DailyAtHourAndMinute(scheduleTime.Hours, scheduleTime.Minutes))
+                    .Build();
+
+                await _scheduler.ScheduleJob(job, trigger);
+                StatusMessage = $"Backup scheduled at {ScheduledTime} daily.";
+            }
+            else
+            {
+                StatusMessage = "Invalid time format!";
+            }
         }
 
         public string DatabaseName
