@@ -23,9 +23,9 @@
 		</Grid.RowDefinitions>
 
 		<!--Backup Folder Selection-->
-		<TextBlock Text="Backup Folder:" FontWeight="Bold"/>
+		<TextBlock Text="Backup Folder:" FontWeight="Bold" />
 		<StackPanel Orientation="Horizontal" Grid.Row="1" Margin="0,5,0,10">
-			<TextBox Text="{Binding BackupFolder, UpdateSourceTrigger=PropertyChanged}" Width="300"/>
+			<TextBox Text="{Binding BackupFolder, UpdateSourceTrigger=PropertyChanged}" Width="350"/>
 			<Button 
 				Content="Browse..." Margin="5,0,0,0" 
 				Style="{StaticResource MenuBarButton}"
@@ -34,14 +34,27 @@
 		</StackPanel>
 
 		<!--SQL Server Instance Name-->
-		<TextBlock Text="SQL Server Instance:" FontWeight="Bold" Grid.Row="2" />
-		<TextBox x:Name="txtSqlServer" Grid.Row="3" Width="300" Margin="0,5,0,10"
+		<StackPanel Orientation="Horizontal" Grid.Row="2">
+
+			<TextBlock Text="SQL Server Instance:" FontWeight="Bold" Margin="0,5,5,5"/>
+			<TextBox x:Name="txtSqlServer" Width="250" Margin="0,5,0,5"
 				 Text="{Binding SqlServerName, UpdateSourceTrigger=PropertyChanged}"
 				 HorizontalAlignment="Left"/>
+		</StackPanel>
+		<StackPanel Orientation="Horizontal" Grid.Row="3">
+			<TextBlock Text="Username:" FontWeight="Bold" Margin="0,5,5,5"/>
+			<TextBox x:Name="txtSqlUsername" Width="150" Margin="0,5,0,5"
+				 Text="{Binding SqlUsername, UpdateSourceTrigger=PropertyChanged}"
+				 HorizontalAlignment="Left"/>
+			<TextBlock Text="Password:" FontWeight="Bold" Margin="10,5,5,5"/>
+			<TextBox x:Name="txtSqlPassword" Width="150" Margin="0,5,0,5"
+				 Text="{Binding SqlPassword, UpdateSourceTrigger=PropertyChanged}"
+				 HorizontalAlignment="Left"/>
+		</StackPanel>
 		
 		<!--Database Name Input-->
 		<TextBlock Text="Database Name:" FontWeight="Bold" Grid.Row="4"/>
-		<TextBox x:Name="txtDatabaseName" Grid.Row="5" Width="300" Margin="0,5,0,10"
+		<TextBox x:Name="txtDatabaseName" Grid.Row="5" Width="350" Margin="0,5,0,10"
 				 Text="{Binding DatabaseName, UpdateSourceTrigger=PropertyChanged}"
 				 HorizontalAlignment="Left"/>
 
@@ -81,29 +94,4 @@
 					Style="{StaticResource StyledButton}"
 					Command="{Binding SaveBackupSettingsCommand}" />
 	</Grid>
-
-	<!--<Grid Margin="20">
-		<Grid.RowDefinitions>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="Auto"/>
-		</Grid.RowDefinitions>
-
-		<TextBlock Text="Database Name:" FontWeight="Bold"/>
-		<TextBox Text="{Binding DatabaseName, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1"/>
-
-		<TextBlock Text="Backup Folder:" FontWeight="Bold" Grid.Row="2"/>
-		<StackPanel Orientation="Horizontal" Grid.Row="3">
-			<TextBox Text="{Binding BackupFolder, UpdateSourceTrigger=PropertyChanged}" Width="300"/>
-			<Button Content="Browse" Command="{Binding BrowseCommand}" Margin="5,0,0,0"/>
-		</StackPanel>
-
-		<Button Content="Backup Now" Command="{Binding BackupCommand}" Grid.Row="4"
-                Background="Green" Foreground="White" Height="35"/>
-
-		<TextBlock Text="{Binding StatusMessage}" Grid.Row="5" FontWeight="Bold" Foreground="Blue"/>
-	</Grid>-->
-
 </Window>

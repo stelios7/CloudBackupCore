@@ -13,6 +13,28 @@ namespace Cloud_Backup_Core.Viewmodels
 {
     internal class BackupViewModel : BaseViewModel
     {
+        private string _username;
+
+        public string SqlUsername
+        {
+            get { return _username; }
+            set { _username = value; 
+                OnPropertyChanged(nameof(SqlUsername));
+            }
+        }
+
+        private string _password;
+            
+        public string SqlPassword
+        {
+            get { return _password; }
+            set { _password = value; 
+                OnPropertyChanged(nameof(SqlPassword));
+            }
+        }
+
+
+
         private IScheduler _scheduler;
         private readonly SqlBackupService _backupService;
         private BackupModel _backupModel;
@@ -49,17 +71,21 @@ namespace Cloud_Backup_Core.Viewmodels
 
         public BackupViewModel()
         {
-            _backupService = new SqlBackupService(@$"Server={Properties.Settings.Default.SQLServerInstance};Database={Properties.Settings.Default.SQLDatabaseForBackup};Trusted_Connection=True;");
             _backupModel = new BackupModel();
-
             BackupCommand = new RelayCommand(execute => ExecuteBackup(), canExecute => CanExecuteBackup());
             BrowseCommand = new RelayCommand(execute => BrowseBackupFolder(), canExecute => true);
             SetScheduleCommand = new RelayCommand(execute => SetScheduleForBackup(), canExecute => true);
             SaveBackupSettingsCommand = new RelayCommand(execute => SaveBackupSettings(), canExecute => CanExecuteBackup());
+            LoadSettings();
 
+            var server = Properties.Settings.Default.SQLServerInstance;
+            var db = Properties.Settings.Default.SQLDatabaseForBackup;
+            var u = Properties.Settings.Default.SQLUsername;
+            var p = Properties.Settings.Default.SQLPassword;
+            string connectionString = @$"Server={server};Database={db};User Id={u};Password={p};TrustServerCertificate=True";
+            _backupService = new SqlBackupService(connectionString);
 
             InitializeScheduler();
-            LoadSettings();
         }
 
         private async void InitializeScheduler()
@@ -79,8 +105,12 @@ namespace Cloud_Backup_Core.Viewmodels
             Properties.Settings.Default.SQLDatabaseBackupPath = BackupFolder;
             Properties.Settings.Default.SQLServerInstance = SqlServerName;
             Properties.Settings.Default.SQLDatabaseForBackup = DatabaseName;
-            
+
             //TODO: set and save schedule backup timer
+            Properties.Settings.Default.SQLDatabaseBackupScheduleTime = TimeSpan.Parse(ScheduledTime);
+
+            Properties.Settings.Default.SQLUsername = SqlUsername;
+            Properties.Settings.Default.SQLPassword = SqlPassword;
 
             Properties.Settings.Default.Save();
         }
@@ -91,7 +121,9 @@ namespace Cloud_Backup_Core.Viewmodels
             BackupFolder = settings.SQLDatabaseBackupPath;
             DatabaseName = settings.SQLDatabaseForBackup;
             SqlServerName = settings.SQLServerInstance;
-            ScheduledTime = settings.SQLDatabaseBackupScheduleTime.ToString("HH:mm");
+            SqlUsername = settings.SQLUsername;
+            SqlPassword = settings.SQLPassword; 
+            ScheduledTime = settings.SQLDatabaseBackupScheduleTime.ToString(@"hh\:mm");
         }
 
         private async void SetScheduleForBackup()
@@ -112,6 +144,12 @@ namespace Cloud_Backup_Core.Viewmodels
                     .WithIdentity("BackupTrigger")
                     .WithSchedule(CronScheduleBuilder.DailyAtHourAndMinute(scheduleTime.Hours, scheduleTime.Minutes))
                     .Build();
+
+                // FOR TESTING: Run 30 seconds from now
+                //var trigger = TriggerBuilder.Create()
+                //    .WithIdentity("TestTrigger")
+                //    .StartAt(DateBuilder.FutureDate(30, IntervalUnit.Second)) // 30 sec delay
+                //    .Build();
 
                 await _scheduler.ScheduleJob(job, trigger);
                 StatusMessage = $"Backup scheduled at {ScheduledTime} daily.";

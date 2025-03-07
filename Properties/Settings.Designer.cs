@@ -178,5 +178,29 @@ namespace Cloud_Backup_Core.Properties {
                 this["SQLServerInstance"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string SQLUsername {
+            get {
+                return ((string)(this["SQLUsername"]));
+            }
+            set {
+                this["SQLUsername"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string SQLPassword {
+            get {
+                return ((string)(this["SQLPassword"]));
+            }
+            set {
+                this["SQLPassword"] = value;
+            }
+        }
     }
 }

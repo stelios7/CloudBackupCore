@@ -35,18 +35,12 @@
 			<Setter Property="HorizontalContentAlignment" Value="Stretch" />
 		</Style>
 
-		<!--	Status Bar	Background #D6BD98	-->
-		<!--	Status Bar	Foreground #2C3930	-->
-		<!--	Label		Background #DCD7C9	-->
-		<!--	Window		Background #DCD7C9	-->
-		
 		<Style TargetType="StatusBar">
 			<Setter Property="Background" Value="#D6BD98" />
 			<Setter Property="FontSize" Value="8" />
 			<Setter Property="Foreground" Value="#2C3930" />
 			<Setter Property="Margin" Value="0" />
 			<Setter Property="Padding" Value="0" />
-			<!--<Setter Property="Height" Value="20" />-->
 		</Style>
 		
 

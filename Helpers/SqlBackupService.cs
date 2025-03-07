@@ -25,12 +25,23 @@ namespace Cloud_Backup_Core.Helpers
                 if (!Directory.Exists(backupFolder))
                     Directory.CreateDirectory(backupFolder);
 
+                string query = "SELECT SUSER_NAME();";
+                using (SqlConnection conn = new SqlConnection(_connectionString))
+                {
+                    await conn.OpenAsync();
+                    using (SqlCommand cmd = new SqlCommand(query, conn))
+                    {
+                        string user = (string)await cmd.ExecuteScalarAsync();
+                        Debug.WriteLine($"Connected as: {user}");
+                    }
+                }
+
 
                 string backupFile = Path.Combine(backupFolder, $"{databaseName}_{DateTime.Now:yyyyMMdd_HHmmss}.bak");
                 string backupQuery = $@"
 BACKUP DATABASE [{databaseName}]
-TO DISK = '{backupFolder}'
-WITH FORMAT, INIT, COMPRESSION, STATS = 10;";
+TO DISK = '{backupFile}'
+WITH FORMAT, INIT, STATS = 10;";
 
                 using (SqlConnection conn = new SqlConnection(_connectionString))
                 {
