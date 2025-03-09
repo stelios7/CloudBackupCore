@@ -241,15 +241,18 @@ namespace Cloud_Backup_Core.Viewmodels
 
         private void EnterPressed()
         {
-            if (RootPassword == "sld" || RootPassword == "SLD")
-            {
-                Logger.Log("Settings timer started.", true);
+            //if (RootPassword == "sld" || RootPassword == "SLD")
+            //{
+            //    Logger.Log("Settings timer started.", true);
 
-                SettingsWindowView settingsWindow = new SettingsWindowView();
+            //    SettingsWindowView settingsWindow = new SettingsWindowView();
 
-                settingsWindow.ShowDialog();
-            }
-            RootPassword = "";
+            //    settingsWindow.ShowDialog();
+            //}
+            //RootPassword = "";
+
+            SettingsWindowView settingsWindow = new SettingsWindowView();
+            settingsWindow.ShowDialog();
         }
 
         #endregion

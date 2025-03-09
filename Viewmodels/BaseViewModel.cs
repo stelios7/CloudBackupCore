@@ -36,5 +36,7 @@ namespace Cloud_Backup_Core.Viewmodels
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+
+
     }
 }

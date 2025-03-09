@@ -11,23 +11,24 @@
 		Style="{StaticResource MainWindowStyle}"
 		>
 	<Window.Resources>
-		<!--	Status Bar	Background #D6BD98	-->
-		<!--	Status Bar	Foreground #2C3930	-->
-		<!--	Label		Background #DCD7C9	-->
-		<!--	Window		Background #DCD7C9	-->
 		
+		<!--	#####	CONVERTERS	#####	-->
 		<converters:BackupStatusToStringConverter x:Key="BackupStatusToStringConverter"/>
 		<converters:BackupStatusToBoolConverter x:Key="BackupStatusToBoolConverter" />
 		<converters:BackupStatusToVisibilityConverter x:Key="BackupStatusToVisibilityConverter" />
 		<converters:DoubleToStringConverter x:Key="DoubleToStringConverter" />
+
+		<!--	#####	Main Label	#####	-->
 		<Style TargetType="Label" x:Key="MainLabel">
 			<Setter Property="Margin" Value="0" />
 			<Setter Property="Padding" Value="0" />
 			<Setter Property="VerticalContentAlignment" Value="Center" />
-			<Setter Property="FontSize" Value="12" />
+			<Setter Property="FontSize" Value="14" />
 			<Setter Property="HorizontalContentAlignment" Value="Stretch" />
 			<Setter Property="Background" Value="#DCD7C9" />
 		</Style>
+
+		<!--	#####	Status Label	#####	-->
 		<Style TargetType="Label" x:Key="StatusLabel">
 			<Setter Property="Margin" Value="0" />
 			<Setter Property="Padding" Value="0" />
@@ -35,6 +36,7 @@
 			<Setter Property="HorizontalContentAlignment" Value="Stretch" />
 		</Style>
 
+		<!--	#####	StatusBar	#####	-->
 		<Style TargetType="StatusBar">
 			<Setter Property="Background" Value="#D6BD98" />
 			<Setter Property="FontSize" Value="8" />
@@ -49,12 +51,12 @@
 		<Grid.RowDefinitions>
 			<RowDefinition Height="20" />
 			<RowDefinition Height="*" />
-			<RowDefinition Height="15" />
-			<RowDefinition Height="15" />
+			<RowDefinition Height="20" />
+			<RowDefinition Height="20" />
 			<RowDefinition Height="15" />
 		</Grid.RowDefinitions>
 		<StackPanel Orientation="Horizontal" Grid.Row="0">
-			<Border Width="40" CornerRadius="5" BorderBrush="#D6BD98" BorderThickness="1" Margin="2"
+			<!--<Border Width="40" CornerRadius="5" BorderBrush="#D6BD98" BorderThickness="1" Margin="2"
 					Background="White"
 					Height="10">
 				<TextBox FontSize="6"
@@ -70,14 +72,19 @@
 						<KeyBinding Key="Enter" Command="{Binding EnterPressed_command}" />
 					</TextBox.InputBindings>
 				</TextBox>
-			</Border>
+			</Border>-->
+			<Button Content="FTP"
+					Command="{Binding EnterPressed_command}"
+					Style="{StaticResource MenuBarButton}" 
+					/>
+
 			<Button Content="SQL Backup"
 					Command="{Binding ShowBackup_command}"
 					Style="{StaticResource MenuBarButton}" 
 					/>
 		</StackPanel>
 		<StackPanel Grid.Row="1">
-			<StackPanel Grid.Column="0" Margin="5" Width="150">
+			<StackPanel Grid.Column="0" Margin="5" Width="200" >
 				<Button Content="Force Upload" Margin="5" Width="auto" Height="30"
 					Command="{Binding ForceUpload_command}"
 					Visibility="{Binding BackupStatus, Converter={StaticResource BackupStatusToVisibilityConverter}}"
@@ -97,7 +104,7 @@
 
 		<StatusBar Grid.Row="2" >
 			<StatusBarItem>
-				<TextBlock Text="Status:" VerticalAlignment="center" />
+				<TextBlock Text="Status:" VerticalAlignment="center" FontSize="12"/>
 			</StatusBarItem>
 
 			<StatusBarItem>
@@ -113,11 +120,15 @@
 
 		<StatusBar Grid.Row="3" >
 			<StatusBarItem>
-				<TextBlock Width="auto" Text="Last sync:" VerticalAlignment="Center" />
+				<TextBlock Width="auto" Text="Last sync:" VerticalAlignment="Center" 
+						   FontSize="12"
+						   />
 			</StatusBarItem>
 
 			<StatusBarItem>
-				<TextBlock Margin="5 0" Width="120" Text="{Binding LastBackupTime}" />
+				<TextBlock Margin="5 0" Width="120" Text="{Binding LastBackupTime}" 
+						   FontSize="10"
+						   />
 			</StatusBarItem>
 		</StatusBar>
 

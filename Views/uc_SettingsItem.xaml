@@ -4,17 +4,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
-             Height="25" Width="310"
-			 
+             Height="25" Width="330"
 			 >
-	<!-- Status Bar	Background				#D6BD98	-->
-	<!-- Status Bar	Foreground				#2C3930	-->
-	<!-- Label		Background				#DCD7C9	-->
-	<!-- Window		Background				#DCD7C9	-->
-	<!-- Button		Background	Solid Green	#677D6A	-->
-	<!-- Button		Foreground	Light Beige	#DCD7C9	-->
-	<!-- Button		BorderBrush				#D6BD98	-->
-
 	<Border CornerRadius="2" Padding="0" BorderBrush="#D6BD98" BorderThickness="0">
 		<DockPanel LastChildFill="False" VerticalAlignment="Center">
 			<!-- Checkbox -->
@@ -35,9 +26,15 @@
                          Foreground="#2C3930" 
 						 Background="Transparent"
                          BorderThickness="0" Padding="0" 
-						 Text="{Binding LocalPath, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+						 Text="{Binding LocalPath, UpdateSourceTrigger=PropertyChanged}"
 						 />
 			</Border>
+
+			<Button Content="•••"
+					IsEnabled="{Binding IsChecked, ElementName=EnableCheckbox}"
+					Style="{StaticResource MenuBarButton}" 
+					Command="{Binding OpenFolderBrowser_command}"
+					/>
 		</DockPanel>
 	</Border>
 

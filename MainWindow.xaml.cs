@@ -21,7 +21,7 @@ namespace Cloud_Backup_Core
     /// </summary>
     public partial class MainWindow : Window
     {
-        private const int UPDATE_TIMER = 300;
+        private const int UPDATE_TIMER = 600;
         private NotifyIcon _notifyIcon;
         private CancellationTokenSource _cts;
 
@@ -45,10 +45,11 @@ namespace Cloud_Backup_Core
         }
         private void CreateNecessaryData()
         {
-            
-            if (!Directory.Exists(System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Cloud_Backup_Core", "update")))
+            var local_appdata_folder = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData));
+            var local_appdata_cloudbackupcore_path = System.IO.Path.Combine(local_appdata_folder, "Cloud_Backup_Core", "update");
+            if (!Directory.Exists(local_appdata_cloudbackupcore_path))
             {
-                Directory.CreateDirectory("C:\\Users\\paokf\\AppData\\Local\\Cloud_Backup_Core\\update");
+                Directory.CreateDirectory(local_appdata_cloudbackupcore_path);
                 Debug.Print("%LOCALAPPDATA% OK!");
             }
         }
@@ -107,6 +108,8 @@ namespace Cloud_Backup_Core
             var processInfo = new ProcessStartInfo
             {
                 FileName = updaterPath,
+                CreateNoWindow = true,
+                WindowStyle = ProcessWindowStyle.Hidden,
                 UseShellExecute = true,  // Required to run as administrator
                 Verb = "runas"           // Run as admin
             };

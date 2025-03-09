@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Cloud_Backup_Core.Views"
         mc:Ignorable="d"
-        Title="Ρυθμίσεις" Height="230" Width="350"
+        Title="Ρυθμίσεις" Height="230" Width="360"
 		WindowStartupLocation="CenterScreen"
 		WindowStyle="ToolWindow"
 		ResizeMode="NoResize"

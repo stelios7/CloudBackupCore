@@ -19,7 +19,11 @@ namespace Cloud_Backup_Core.Viewmodels
 
         private void OpenFolderBrowser()
         {
-
+            var dialog = new System.Windows.Forms.FolderBrowserDialog();
+            if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                LocalPath = dialog.SelectedPath;
+            }
         }
 
         public bool UploadEnabled { get; set; }
@@ -27,7 +31,9 @@ namespace Cloud_Backup_Core.Viewmodels
         public string? LocalPath
         {
             get { return localPath; }
-            set { localPath = value; }
+            set { localPath = value;
+                OnPropertyChanged(nameof(LocalPath));
+            }
         }
 
         private string? software;

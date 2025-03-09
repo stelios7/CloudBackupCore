@@ -12,12 +12,14 @@ namespace Cloud_Backup_Core.Views
     /// Interaction logic for SettingsWindowView.xaml
     /// </summary>
     public partial class SettingsWindowView : Window    {
+        private const int SETTINGS_VIEW_ALIVE_TIMER = 90;
         public SettingsWindowView()
         {
             Debug.WriteLine("Initiating settings window");
             InitializeComponent();
+            this.Title = "FTP Settings";
             DispatcherTimer timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromSeconds(50);
+            timer.Interval = TimeSpan.FromSeconds(SETTINGS_VIEW_ALIVE_TIMER);
             timer.Tick += (s, args) =>
             {
                 timer.Stop();

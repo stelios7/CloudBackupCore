@@ -22,6 +22,7 @@ namespace Cloud_Backup_Core.Views
         public BackupManagerView()
         {
             InitializeComponent();
+            this.Title = "Backup Settings";
         }
     }
 }

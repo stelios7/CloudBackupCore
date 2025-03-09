@@ -15,45 +15,9 @@ namespace Cloud_Backup_Core.Viewmodels
 {
     internal class BackupViewModel : BaseViewModel
     {
-        private string _username;
-
-        public string SqlUsername
-        {
-            get { return _username; }
-            set { _username = value; 
-                OnPropertyChanged(nameof(SqlUsername));
-            }
-        }
-
-        private string _password;
-            
-        public string SqlPassword
-        {
-            get { return _password; }
-            set { _password = value; 
-                OnPropertyChanged(nameof(SqlPassword));
-            }
-        }
-
-
-
-        private IScheduler _scheduler;
         private readonly SqlBackupService _backupService;
-        private BackupModel _backupModel;
-        private string _statusMessage;
-        private bool _isBackingUp;
-        private string _sqlServerName;
-
-        private string _scheduledTime = "10:00";
-
-        public string ScheduledTime
-        {
-            get { return _scheduledTime; }
-            set { _scheduledTime = value; 
-                OnPropertyChanged(nameof(ScheduledTime));
-            }
-        }
-
+        private string _username;
+        private string _password;
 
         public string SqlServerName
         {
@@ -64,7 +28,34 @@ namespace Cloud_Backup_Core.Viewmodels
                 OnPropertyChanged(nameof(SqlServerName));
             }
         }
+        public string ScheduledTime
+        {
+            get { return _scheduledTime; }
+            set { _scheduledTime = value; 
+                OnPropertyChanged(nameof(ScheduledTime));
+            }
+        }
+        public string SqlUsername
+        {
+            get { return _username; }
+            set { _username = value; 
+                OnPropertyChanged(nameof(SqlUsername));
+            }
+        }
+        public string SqlPassword
+        {
+            get { return _password; }
+            set { _password = value; 
+                OnPropertyChanged(nameof(SqlPassword));
+            }
+        }
 
+        private IScheduler _scheduler;
+        private BackupModel _backupModel;
+        private string _statusMessage;
+        private bool _isBackingUp;
+        private string _sqlServerName;
+        private string _scheduledTime = "10:00";
 
         public RelayCommand BackupCommand { get; }
         public RelayCommand BrowseCommand { get; }
@@ -108,7 +99,7 @@ namespace Cloud_Backup_Core.Viewmodels
             Properties.Settings.Default.SQLServerInstance = SqlServerName;
             Properties.Settings.Default.SQLDatabaseForBackup = DatabaseName;
 
-            //TODO: set and save schedule backup timer
+            //TODO: set and save schedule backup timer → DONE
             Properties.Settings.Default.SQLDatabaseBackupScheduleTime = TimeSpan.Parse(ScheduledTime);
 
             Properties.Settings.Default.SQLUsername = SqlUsername;
@@ -153,8 +144,8 @@ namespace Cloud_Backup_Core.Viewmodels
                     .WithSchedule(CronScheduleBuilder.CronSchedule("0 0/2 * * * ?"))
                     .Build();
 
-                await _scheduler.ScheduleJob(job, trigger);
-                StatusMessage = $"Backup scheduled at {scheduleTime.Hours}, {scheduleTime.Minutes} daily.";
+                await _scheduler.ScheduleJob(job, _trig);
+                StatusMessage = $"Backup scheduled at {ScheduledTime} daily.";
 
                 var jobKeys = await _scheduler.GetJobKeys(GroupMatcher<JobKey>.AnyGroup());
                 Debug.WriteLine($"Jobs scheduled: {string.Join(", ", jobKeys)}");
