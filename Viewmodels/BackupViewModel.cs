@@ -8,6 +8,8 @@ using Quartz;
 using Quartz.Impl;
 using Cloud_Backup_Core.Helpers;
 using Cloud_Backup_Core.Models;
+using Quartz.Impl.Matchers;
+using System.Diagnostics;
 
 namespace Cloud_Backup_Core.Viewmodels
 {
@@ -113,6 +115,7 @@ namespace Cloud_Backup_Core.Viewmodels
             Properties.Settings.Default.SQLPassword = SqlPassword;
 
             Properties.Settings.Default.Save();
+            SetScheduleForBackup();
         }
 
         private void LoadSettings()
@@ -133,26 +136,31 @@ namespace Cloud_Backup_Core.Viewmodels
             if (TimeSpan.TryParse(ScheduledTime, out TimeSpan scheduleTime))
             {
                 var job = JobBuilder.Create<BackupJob>()
-                    .WithIdentity("BackupJob")
+                    .WithIdentity("DailyBackupJob")
                     .Build();
 
                 job.JobDataMap["BackupService"] = _backupService;
                 job.JobDataMap["DatabaseName"] = DatabaseName;
                 job.JobDataMap["BackupFolder"] = BackupFolder;
 
-                var trigger = TriggerBuilder.Create()
-                    .WithIdentity("BackupTrigger")
+                var _trig = TriggerBuilder.Create()
+                    .WithIdentity("Daily")
                     .WithSchedule(CronScheduleBuilder.DailyAtHourAndMinute(scheduleTime.Hours, scheduleTime.Minutes))
                     .Build();
 
-                // FOR TESTING: Run 30 seconds from now
-                //var trigger = TriggerBuilder.Create()
-                //    .WithIdentity("TestTrigger")
-                //    .StartAt(DateBuilder.FutureDate(30, IntervalUnit.Second)) // 30 sec delay
-                //    .Build();
+                var trigger = TriggerBuilder.Create()
+                    .WithIdentity("BackupTrigger")
+                    .WithSchedule(CronScheduleBuilder.CronSchedule("0 0/2 * * * ?"))
+                    .Build();
 
                 await _scheduler.ScheduleJob(job, trigger);
-                StatusMessage = $"Backup scheduled at {ScheduledTime} daily.";
+                StatusMessage = $"Backup scheduled at {scheduleTime.Hours}, {scheduleTime.Minutes} daily.";
+
+                var jobKeys = await _scheduler.GetJobKeys(GroupMatcher<JobKey>.AnyGroup());
+                Debug.WriteLine($"Jobs scheduled: {string.Join(", ", jobKeys)}");
+
+                var triggerKeys = await _scheduler.GetTriggerKeys(GroupMatcher<TriggerKey>.AnyGroup());
+                Debug.WriteLine($"Triggers scheduled: {string.Join(", ", triggerKeys)}");
             }
             else
             {
