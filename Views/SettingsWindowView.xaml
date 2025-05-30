@@ -4,21 +4,32 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Cloud_Backup_Core.Views"
+		xmlns:conv="clr-namespace:Cloud_Backup_Core.Helpers"
         mc:Ignorable="d"
-        Title="Ρυθμίσεις" Height="230" Width="350"
+        Title="Ρυθμίσεις" 
+		Height="600" MinHeight="600" MaxHeight="600"
+		Width="440" MaxWidth="440" MinWidth="440"
 		WindowStartupLocation="CenterScreen"
 		WindowStyle="ToolWindow"
-		Background="#DCD7C9"
 		>
-	<!-- Status Bar	Background	#D6BD98	-->
-	<!-- Status Bar	Foreground	#2C3930	-->
-	<!-- Label		Background	#DCD7C9	-->
-	<!-- Window		Background	#DCD7C9	-->
-	<!-- Button		Background	#677D6A	-->
-	<!-- Button		Foreground	#DCD7C9	-->
-	<!-- Button		BorderBrush	#D6BD98	-->
-	<Grid>
-		<DockPanel LastChildFill="True" Margin="10">
+	<Window.Resources>
+		<Style TargetType="GroupBox">
+			<Setter Property="FontSize" Value="12" />
+		</Style>
+		<!--<conv:ErrorVisibilityConverter x:Key="ErrorVisibilityConverter"/>-->
+	</Window.Resources>
+	<!--<Grid>
+		<Grid.Resources>
+			<Style TargetType="TextBox" BasedOn="{StaticResource SettingsTextbox}" />
+			<Style TargetType="Border">
+				<Setter Property="CornerRadius" Value="5" />
+				<Setter Property="BorderBrush" Value="{StaticResource SecondaryButtonBrush}" />
+				<Setter Property="BorderThickness" Value="1" />
+				<Setter Property="Margin" Value="0" />
+				<Setter Property="Background" Value="Transparent" />
+			</Style>
+		</Grid.Resources>
+		<DockPanel LastChildFill="True" Margin="10" HorizontalAlignment="Center" >
 			<StackPanel Orientation="Vertical" DockPanel.Dock="Left">
 				<ItemsControl ItemsSource="{Binding UploadSettings}">
 					<ItemsControl.ItemTemplate>
@@ -27,19 +38,103 @@
 						</DataTemplate>
 					</ItemsControl.ItemTemplate>
 				</ItemsControl>
-				<TextBox Width="150" VerticalContentAlignment="Center"
-						 HorizontalContentAlignment="Center"
+				<Border Height="30" Margin="2" BorderThickness="0">
+					
+				<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+					<TextBlock Text="ΑΦΜ" VerticalAlignment="Center"/>
+					<TextBox Width="150" HorizontalContentAlignment="Center" Margin="5"
+							 
 						 Text="{Binding SoftwareName, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
 						 />
+				</StackPanel>
+				</Border>
+				<Border Height="30" Margin="2" BorderThickness="0">
+
+					<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+						<TextBlock Text="" VerticalAlignment="Center"/>
+						<TextBox Width="150" HorizontalContentAlignment="Center" Margin="5"
+							 
+						 Text="{Binding SoftwareName, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+						 />
+					</StackPanel>
+				</Border>
 				<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
 
-					<!--<Button Content="Save" Margin="10" Width="100" Command="{Binding SaveCommand}"/>-->
+					-->
+	<!--<Button Content="Save" Margin="10" Width="100" Command="{Binding SaveCommand}"/>-->
+	<!--
 					<Button Content="Save" Margin="10" Width="100" Height="30" Command="{Binding SaveCommand}" 
-							Style="{StaticResource ResourceKey=StyledButton}"
-							>
-					</Button>
+							Style="{StaticResource PrimaryButton}" />
 				</StackPanel>
+				
 			</StackPanel>
 		</DockPanel>
-	</Grid>
+	</Grid>-->
+
+	<StackPanel Margin="20" Orientation="Vertical" VerticalAlignment="Top">
+		<StackPanel.Resources>
+
+		</StackPanel.Resources>
+		<!-- Auto Backup Settings -->
+		<GroupBox Header="Αυτόματο Backup">
+			<StackPanel Margin="10">
+				<StackPanel Orientation="Horizontal" Margin="0 5">
+					<TextBlock Text="Χρονικό διάστημα ελέγχου (δευτερόλεπτα):" VerticalAlignment="Center" Margin="0 0 10 0"/>
+
+					<!-- The input field -->
+					<TextBox x:Name="AutoBackupTextBox"
+             Text="{Binding AutoBackupInterval, 
+                            UpdateSourceTrigger=PropertyChanged, 
+                            ValidatesOnDataErrors=True, 
+                            NotifyOnValidationError=True}"
+							 Width="100"
+             Margin="0,0,0,2" />
+				</StackPanel>
+
+				<CheckBox Content="Ενεργοποίηση αυτόματου backup"
+                          IsChecked="{Binding IsAutoBackupEnabled}" Margin="0 5"/>
+			</StackPanel>
+		</GroupBox>
+
+		<!-- File Handling -->
+		<GroupBox Header="Διαχείριση Αρχείων" Margin="0 0 0 10">
+			<StackPanel Margin="10">
+				<CheckBox Content="Διαγραφή τοπικού αρχείου μετά την επιτυχή μεταφόρτωση"
+                          IsChecked="{Binding DeleteLocalAfterUpload}" Margin="0 5"/>
+				<CheckBox Content="Διατήρηση αντιγράφου ασφαλείας σε τοπικό φάκελο"
+                          IsChecked="{Binding KeepLocalBackup}" Margin="0 5"/>
+				<StackPanel Orientation="Horizontal" Margin="0 5">
+					<TextBlock Text="Όριο μεγέθους προς ανέβασμα (MB):" VerticalAlignment="Center" Margin="0 0 10 0"/>
+					<TextBox Width="100"
+						Text="{Binding MaxUploadSizeMB, 
+                    UpdateSourceTrigger=PropertyChanged, 
+                    ValidatesOnDataErrors=True}"/>
+				</StackPanel>
+			</StackPanel>
+		</GroupBox>
+
+		<!-- Notifications & Logging -->
+		<GroupBox Header="Ειδοποιήσεις και Καταγραφή" Margin="0 0 0 10">
+			<StackPanel Margin="10">
+				<CheckBox Content="Ειδοποίηση για αποτυχημένο ανέβασμα"
+                          IsChecked="{Binding NotifyOnFailure}" Margin="0 5"/>
+				<CheckBox Content="Εμφάνιση καταγραφής ενεργειών (log)"
+                          IsChecked="{Binding ShowLogs}" Margin="0 5"/>
+			</StackPanel>
+		</GroupBox>
+
+		<!-- Startup -->
+		<GroupBox Header="Εκκίνηση" Margin="0 0 0 10">
+			<StackPanel Margin="10">
+				<CheckBox Content="Εκκίνηση με τα Windows"
+                          IsChecked="{Binding StartWithWindows}" Margin="0 5"/>
+			</StackPanel>
+		</GroupBox>
+
+		<Button Content="Αποθήκευση" 
+                Command="{Binding SaveCommand}" 
+				Style="{StaticResource SettingsWindowButton}"
+				/>
+
+	</StackPanel>
 </Window>

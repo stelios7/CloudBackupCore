@@ -24,16 +24,23 @@ namespace Cloud_Backup_Core
         private const int UPDATE_TIMER = 300;
         private NotifyIcon _notifyIcon;
         private CancellationTokenSource _cts;
+        MainViewModel vm;
 
         public MainWindow()
         {
             CreateNecessaryData();
-            //InitializeComponent();
-            SetupTrayIcon();
             CreateTimers();
 
-            MainViewModel vm = new MainViewModel();
+            try
+            {
+                vm = new MainViewModel();
+            }
+            catch (Exception ex)
+            {
+                Debug.Print($"Fatal error getting FTP Manager: {ex}");
+            }
 
+            SetupTrayIcon();
             this.Loaded += MainWindow_Loaded;
             this.DataContext = vm;
         }
@@ -45,19 +52,50 @@ namespace Cloud_Backup_Core
         }
         private void CreateNecessaryData()
         {
-            
-            if (!Directory.Exists(System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Cloud_Backup_Core", "update")))
+            // Φτιάχνω φάκελο στο APPDATA αν δεν υπάρχει ήδη
+            string localAppData = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Cloud_Backup_Core");
+            string appDataLocalFolder = System.IO.Path.Combine(localAppData, "update");
+            if (!Directory.Exists(appDataLocalFolder));
             {
-                Directory.CreateDirectory("C:\\Users\\paokf\\AppData\\Local\\Cloud_Backup_Core\\update");
+                Directory.CreateDirectory(appDataLocalFolder);
                 Debug.Print("%LOCALAPPDATA% OK!");
             }
+
+            // Φτιάχνω φάκελο temp στην τοποθεσία εγκατάστασης
+            Config? c = Config.Instance.Load(System.IO.Path.Combine(localAppData, "updater_config.json"));
+            string tempFolder = System.IO.Path.Combine(c.LocalAppPath, "temp");
+            if (!Directory.Exists(tempFolder))
+            {
+                Directory.CreateDirectory(tempFolder);
+                Debug.Print("Temp folder OK");
+            }
+
+            // Φτιάχνω κρυφό φάκελο ρυθμίσεων στην τοποθεσία εγκατάστασης
+            string folderPath = System.IO.Path.Combine(c.LocalAppPath, "settings");
+            if (!Directory.Exists(folderPath))
+            {
+                Directory.CreateDirectory(folderPath);
+                Logger.Debug("Ο φάκελος ρυθμίσεων δημιουργήθηκε.");
+            }
+
+            // Ορισμός ιδιοτήτων του φακέλου σε κρυφές
+            File.SetAttributes(folderPath, FileAttributes.Hidden);
+            Logger.Debug("Ο φάκελος ρυθμίσεων έχει γίνει κρυφός.");
         }
         private void SetupTrayIcon()
         {
             _notifyIcon = new NotifyIcon
             {
                 Icon = new Icon(System.AppDomain.CurrentDomain.BaseDirectory + @"Resources\Content\cloud_backup.ico"),
-                Visible = false
+                Visible = false,
+                Text = $"Cloud Backup Service - Ενεργό" // Tooltip text
+            };
+            vm.PropertyChanged += (sender, args) =>
+            {
+                if (args.PropertyName == nameof(MainViewModel.BackupStatus))
+                {
+                    _notifyIcon.Text = $"Cloud Backup - {vm.BackupStatus}"; 
+                }
             };
             _notifyIcon.DoubleClick += NotifyIcon_DoubleClick;
         }
@@ -68,6 +106,7 @@ namespace Cloud_Backup_Core
 
             Task.Run(async () =>
             {
+                await Task.Delay(2000);
                 while (!token.IsCancellationRequested)
                 {
                     try
@@ -86,20 +125,22 @@ namespace Cloud_Backup_Core
                     catch (Exception ex)
                     {
                         // Log error or handle exception
-                        Console.WriteLine($"Error: {ex.Message}");
+                        Debug.Print($"Error: {ex.Message}");
                     }
                 }
             }, token);
         }
         private void RunUpdater()
         {
+            Debug.Print("Updater started");
             // Path to the updater executable
             string updaterPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "CloudBackupCore", "CloudUpdater.exe");
+            //string updaterPath = "notepad.exe";
 
             // Check if updater exists
             if (!System.IO.File.Exists(updaterPath))
             {
-                Console.WriteLine("Updater not found.");
+                Debug.Print("Updater not found.");
                 return;
             }
 
@@ -117,7 +158,7 @@ namespace Cloud_Backup_Core
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Failed to start updater: {ex.Message}");
+                Debug.Print($"Failed to start updater: {ex.Message}");
             }
         }
 

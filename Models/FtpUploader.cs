@@ -71,20 +71,30 @@ namespace Cloud_Backup_Core.Models
 
         public FtpUploader()
         {
-            FtpServer = @"seldigroup.synology.me";
-            FtpUsername = @"seldi_backup";
-            FtpPassword = @"Backup124578s";
-            FtpPort = 33792;
+            try
+            {
+
+            string ConfigurationFile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Cloud_Backup_Core", "updater_config.json");
+            Config? ConfigManager = new Config().Load(ConfigurationFile);
+            FtpServer = ConfigManager.FtpServer;
+            FtpUsername = ConfigManager.FtpUsername;
+            FtpPassword = ConfigManager.FtpPassword;
+            FtpPort = ConfigManager.FtpPort;
+            }
+            catch (Exception ex)
+            {
+                Debug.Print("Error FtpUploader");
+            }
         }
 
         private readonly string remoteDirectory;
 
-        public async Task UploadFileFtp(CancellationToken token, string? where, string? who, string? file_to_upload = null )
+        public async Task UploadFileFtp(string file_to_upload, string remote_ftp_destination, CancellationToken token)
         {
             try
             {
                 string localFilePath = file_to_upload ?? @"C:\Users\paokf\Documents\caesium-image-compressor-2.1.0-win.zip";
-                string remoteFilePath = $"/CLOUDBACKUP/{where}/{who}/{Path.GetFileName(localFilePath)}";
+                string remoteFilePath = $"{remote_ftp_destination}/{Path.GetFileName(localFilePath)}";
                 var isUploadCompleted = false;
 
                 Progress<FtpProgress> progress = new Progress<FtpProgress>(p =>
@@ -92,16 +102,18 @@ namespace Cloud_Backup_Core.Models
                     var lfp = Path.GetFileName(localFilePath);
                     if (p.Progress == 100 && !isUploadCompleted)
                     {
-                        Logger.Log($"{lfp} Uploaded", true);
+                        Logger.Debug($"{lfp} Uploaded");
                         isUploadCompleted = true;
+                        p.Progress = 0;
                     }
                     else
                     {
-                        Logger.Log($"{lfp} progress: {p.Progress}", true);
+                        Logger.Debug($"{lfp} progress: {p.Progress}");
                     }
                     ProgressValue = p.Progress;
                     UploadProgressString = $"{((int)ProgressValue)}%";
                 });
+                
 
                 using (var client = new AsyncFtpClient(FtpServer, FtpUsername, FtpPassword, FtpPort))
                 {

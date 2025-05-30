@@ -47,7 +47,7 @@ namespace Cloud_Backup_Core.Viewmodels
         private void SaveSettings()
         {
             Properties.Settings.Default.Save();
-            Logger.Log("Settings saved.", true);
+            Logger.Debug("Settings saved.");
         }
 
         private void SetSettings()
@@ -82,14 +82,14 @@ namespace Cloud_Backup_Core.Viewmodels
             };
             SoftwareName = settings.SoftwareName;
 
-            Logger.Log("Settings loaded.", true);
+            Logger.Debug("Settings loaded.");
         }
 
         private void ClearSettings()
         {
             Properties.Settings.Default.Reset();
             Properties.Settings.Default.Save();
-            Logger.Log("Settings reset.", true);
+            Logger.Debug("Settings reset.");
         }
     }
 }

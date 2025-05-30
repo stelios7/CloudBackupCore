@@ -7,11 +7,10 @@
         xmlns:converters="clr-namespace:Cloud_Backup_Core.Helpers"
 		xmlns:settings="clr-namespace:Cloud_Backup_Core.Views"
         mc:Ignorable="d"
-        Title="Cloud Backup Core" Height="250" Width="300" 
-		MaxHeight="300" MaxWidth="350"
-		MinHeight="250" MinWidth="300"
+        Title="Cloud Backup Core" Height="350" Width="300" 
+		MaxHeight="400" MaxWidth="350"
+		MinHeight="350" MinWidth="300"
 		ResizeMode="CanResize"
-		Background="#DCD7C9"
 		>
 	<Window.Resources>
 		<!--	Status Bar	Background #D6BD98	-->
@@ -22,6 +21,8 @@
 		<converters:BackupStatusToStringConverter x:Key="BackupStatusToStringConverter"/>
 		<converters:BackupStatusToBoolConverter x:Key="BackupStatusToBoolConverter" />
 		<converters:BackupStatusToVisibilityConverter x:Key="BackupStatusToVisibilityConverter" />
+		<converters:ProgressConverter x:Key="ProgressConverter" />
+
 		<converters:DoubleToStringConverter x:Key="DoubleToStringConverter" />
 		<Style TargetType="Label" x:Key="MainLabel">
 			<Setter Property="Margin" Value="0" />
@@ -38,56 +39,55 @@
 			<Setter Property="HorizontalContentAlignment" Value="Stretch" />
 		</Style>
 
-		<!--	Status Bar	Background #D6BD98	-->
-		<!--	Status Bar	Foreground #2C3930	-->
-		<!--	Label		Background #DCD7C9	-->
-		<!--	Window		Background #DCD7C9	-->
-		
 		<Style TargetType="StatusBar">
-			<Setter Property="Background" Value="#D6BD98" />
-			<Setter Property="FontSize" Value="8" />
+			<Setter Property="Background" Value="{StaticResource SecondaryButtonBrush}" />
+			<Setter Property="FontSize" Value="12" />
 			<Setter Property="Foreground" Value="#2C3930" />
 			<Setter Property="Margin" Value="0" />
 			<Setter Property="Padding" Value="0" />
-			<!--<Setter Property="Height" Value="20" />-->
 		</Style>
 		
 
 	</Window.Resources>
 	<Grid>
 		<Grid.RowDefinitions>
-			<RowDefinition Height="20" />
+			<RowDefinition Height="30" />
 			<RowDefinition Height="*" />
-			<RowDefinition Height="15" />
-			<RowDefinition Height="15" />
-			<RowDefinition Height="15" />
+			<RowDefinition Height="22" />
+			<RowDefinition Height="22" />
+			<RowDefinition Height="25" />
 		</Grid.RowDefinitions>
 		<StackPanel Orientation="Horizontal" Grid.Row="0">
 			<TextBox x:Name="RootPassword" Height="10" Width="50" HorizontalAlignment="Left"
-						 FontSize="6" AcceptsReturn="True" Grid.Row="0" Margin="5 0"
-						 Text="{Binding RootPassword, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-						 >
+					 FontSize="6" AcceptsReturn="True" Grid.Row="0" Margin="5 0"
+					 BorderThickness="0"
+					 BorderBrush="{StaticResource BackgroundMainBrush}"
+					 Text="{Binding RootPassword, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
 				<TextBox.InputBindings>
 					<KeyBinding Key="Enter" Command="{Binding EnterPressed_command}" />
 				</TextBox.InputBindings>
 			</TextBox>
-			<Label Content="" />
+			<TextBlock x:Name="labelAppVersion" Text="{Binding AppVersion}" FontSize="10"
+					   Margin="5 0" Padding="0" VerticalAlignment="Center"
+					   HorizontalAlignment="Right"
+					   Foreground="{StaticResource TextBrush}"
+					   FontWeight="Bold"/>
 		</StackPanel>
 		<StackPanel Grid.Row="1">
-			<StackPanel Grid.Column="0" Margin="5" Width="150">
-				<Button Content="Force Upload" Margin="5" Width="auto" Height="30"
+			<StackPanel Grid.Column="0">
+				<Button Content="Force Upload"
 					Command="{Binding ForceUpload_command}"
 					Visibility="{Binding BackupStatus, Converter={StaticResource BackupStatusToVisibilityConverter}}"
 					IsEnabled="{Binding BackupStatus, Converter={StaticResource BackupStatusToBoolConverter}}"
-					Style="{StaticResource ResourceKey=StyledButton}"
+					Style="{StaticResource ResourceKey=PrimaryButton}"
 					/>
-				<Button Content="Start Sync" Margin="5" Width="auto" Height="30"
+				<Button Content="Start Sync" 
 					Command="{Binding StartSync_command}"
-					Style="{StaticResource ResourceKey=StyledButton}"
+					Style="{StaticResource ResourceKey=PrimaryButton}"
 					/>
-				<Button Content="Pause Sync" Margin="5" Width="auto" Height="30"
+				<Button Content="Pause Sync" 
 					Command="{Binding PauseSync_command}"
-					Style="{StaticResource ResourceKey=StyledButton}"
+					Style="{StaticResource ResourceKey=PrimaryButton}"
 					/>
 			</StackPanel>
 		</StackPanel>
@@ -100,6 +100,10 @@
 			<StatusBarItem>
 				<TextBlock VerticalAlignment="Center" Width="auto"
 					Text="{Binding BackupStatus, Converter={StaticResource BackupStatusToStringConverter}}" />
+			</StatusBarItem>
+
+			<StatusBarItem>
+				<TextBlock Text="Last file: "/>
 			</StatusBarItem>
 			
 			<StatusBarItem Name="FileBeingUploaded">
@@ -114,15 +118,12 @@
 			</StatusBarItem>
 
 			<StatusBarItem>
-				<TextBlock Margin="5 0" Width="120" Text="{Binding LastBackupTime}" />
+				<TextBlock Margin="5 0" Width="auto" Text="{Binding LastBackupTime}" />
 			</StatusBarItem>
 		</StatusBar>
-
-		<StatusBar Grid.Row="4" Padding="0" Margin="0">
-			<StatusBarItem HorizontalAlignment="Center" Padding="0" Margin="0">
-				<ProgressBar Width="295" Value="{Binding FtpManager.ProgressValue}" Maximum="100"
-							 Height="10"/>
-			</StatusBarItem>
-		</StatusBar>
+			<ProgressBar Grid.Row="4" Height="20" Maximum="100" Margin="2"
+                 Value="{Binding FtpManager.ProgressValue}"
+                 HorizontalAlignment="Stretch"
+						 Foreground="{StaticResource AccentColorBrush}" />
 	</Grid>
 </Window>

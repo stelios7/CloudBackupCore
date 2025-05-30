@@ -23,19 +23,43 @@ namespace Cloud_Backup_Core.Viewmodels
 
         public FtpUploader FtpManager { get; }
         private List<CancellationTokenSource> UploadTokens { get; set; }
+        public Config ConfigManager { get; set; }
         public MainViewModel()
         {
+            Debug.Print("Before instance");
             FtpManager = FtpUploader.Instance;
+            Debug.Print("After instance");
+            string ConfigurationFile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Cloud_Backup_Core", "updater_config.json");
+            ConfigManager = Config.Instance.Load(ConfigurationFile);
             BackupStatus = BACKUP_STATUS.IDLE;
             UploadTokens = new List<CancellationTokenSource>();
 
             BackupTimers = new List<DispatcherTimer>();
             RootDirectory = @"C:\Users\paokf\Documents\root_upload";
 
-            SyncNow();
+            AppVersion = GetAppVersion();
+
+            Task.Run(() => SyncNow());
+        }
+
+        private string GetAppVersion()
+        {
+            string version = File.ReadAllText(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "CloudBackupCore","version.txt"));
+            return $"Version: {version}";
         }
 
         #region PROPERTIES DECLARATIONS
+
+        private string appVersion;
+
+        public string AppVersion
+        {
+            get { return appVersion; }
+            set { appVersion = value;
+                OnPropertyChanged(nameof(AppVersion));
+            }
+        }
+
 
         private string fbu;
 
@@ -129,7 +153,7 @@ namespace Cloud_Backup_Core.Viewmodels
             }
             UploadTokens.Clear();
             BackupStatus = BACKUP_STATUS.IDLE;
-            Logger.Log("Backup paused", true);
+            Logger.Debug("Backup paused");
         }
 
         private void StartSync()
@@ -143,7 +167,7 @@ namespace Cloud_Backup_Core.Viewmodels
 
             Task.Run(() => SyncNow())
                 .ContinueWith(_ => BackupStatus = BACKUP_STATUS.IDLE);
-            Logger.Log("Start syncing.", true);
+            Logger.Debug("Start syncing.");
         }
 
         private async Task SyncNow()
@@ -187,15 +211,19 @@ namespace Cloud_Backup_Core.Viewmodels
                         FileBeingUploaded = Path.GetFileName(file);
                         var cts = new CancellationTokenSource();
                         UploadTokens.Add(cts);
-                        await FtpManager.UploadFileFtp(cts.Token, file, item.SoftwareName, user)
-                            .ContinueWith(
-                                (o) =>
-                                {
-                                    BackupStatus = BACKUP_STATUS.IDLE;
-                                    Logger.Log($"Upload successful: {item.LocalPath}", true);
-                                }
-                                )
-                            .ContinueWith(_ => FileMover.MoveFile(file));
+                        string ftp_destination = $"{ConfigManager.FtpRootDirectory}/{item.SoftwareName}/{user}";
+
+                        try
+                        {
+                            await FtpManager.UploadFileFtp(file, ftp_destination, cts.Token);
+                            Logger.Debug($"Upload successful: {item.LocalPath}");
+                            FileMover.MoveFile(file); // Move only after successful upload
+                        }
+                        catch (Exception ex)
+                        {
+                            Logger.Debug($"Upload failed: {ex.Message}");
+                        }
+                        BackupStatus = BACKUP_STATUS.IDLE;
                     }
                 }
             }
@@ -216,15 +244,15 @@ namespace Cloud_Backup_Core.Viewmodels
             s.AppendLine($"Upsales: {settings.UpsalesLocalFilePath}");
 
             LastBackupTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-            SyncNow();
-            Logger.Log(s.ToString(), true);
+            Task.Run(() => SyncNow());
+            Logger.Debug(s.ToString());
         }
 
         private void EnterPressed()
         {
             if (RootPassword == "sld" || RootPassword == "SLD")
             {
-                Logger.Log("Settings timer started.", true);
+                Logger.Debug("Settings timer started.");
 
                 SettingsWindowView settingsWindow = new SettingsWindowView();
 

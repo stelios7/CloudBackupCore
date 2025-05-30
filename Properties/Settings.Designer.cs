@@ -130,5 +130,17 @@ namespace Cloud_Backup_Core.Properties {
                 this["SoftwareName"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string AppVersion {
+            get {
+                return ((string)(this["AppVersion"]));
+            }
+            set {
+                this["AppVersion"] = value;
+            }
+        }
     }
 }

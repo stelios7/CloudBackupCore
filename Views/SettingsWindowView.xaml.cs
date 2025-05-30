@@ -12,12 +12,15 @@ namespace Cloud_Backup_Core.Views
     /// Interaction logic for SettingsWindowView.xaml
     /// </summary>
     public partial class SettingsWindowView : Window    {
+
+        private const int SETTINGS_WINDOW_TIMER = 120;
+
         public SettingsWindowView()
         {
             Debug.WriteLine("Initiating settings window");
             InitializeComponent();
             DispatcherTimer timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromSeconds(50);
+            timer.Interval = TimeSpan.FromSeconds(SETTINGS_WINDOW_TIMER);
             timer.Tick += (s, args) =>
             {
                 timer.Stop();
@@ -25,7 +28,8 @@ namespace Cloud_Backup_Core.Views
             };
 
             timer.Start();
-            this.DataContext = new Viewmodels.SettingsWindowViewModel();
+            //this.DataContext = new Viewmodels.SettingsWindowViewModel(); OLD
+            this.DataContext = new Viewmodels.SettingsViewModelNew();
             //this.Closing += SettingsWindowView_closing;
         }
 

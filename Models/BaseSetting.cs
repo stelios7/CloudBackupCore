@@ -11,14 +11,6 @@ namespace Cloud_Backup_Core.Models
 {
     public class BaseSetting : INotifyPropertyChanged
     {
-        private Logger _logger;
-
-        public Logger Logger
-        {
-            get => _logger ?? new Logger();
-        }
-
-
         public event PropertyChangedEventHandler PropertyChanged;
         public void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {

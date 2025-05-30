@@ -1,6 +1,7 @@
 ﻿using Cloud_Backup_Core.Helpers;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -12,12 +13,21 @@ namespace Cloud_Backup_Core.Models
     { 
         public void MoveFile(string sourcePath)
         {
-            string parent = Directory.GetParent(sourcePath).Parent.FullName;
+            try
+            {
+                string parent = Directory.GetParent(sourcePath).Parent.FullName;
 
-            string destination = Path.Combine(parent, Path.GetFileName(sourcePath));
-            File.Move(sourcePath, destination);
+                string destination = Path.Combine(parent, Path.GetFileName(sourcePath));
+                File.Move(sourcePath, destination);
 
-            DeleteOldFiles(destination);
+                Thread.Sleep(200);
+
+                DeleteOldFiles(parent);
+            }
+            catch (Exception ex)
+            {
+                Debug.Print(ex.Message);
+            }
         }
 
         private void DeleteOldFiles(string sourcePath)
@@ -32,16 +42,16 @@ namespace Cloud_Backup_Core.Models
                     // Check if the file is older than the specified days
                     if (fileInfo.LastWriteTime < DateTime.Now.AddDays(-daysOld))
                     {
-                        Logger.Log($"Deleting: {fileInfo.FullName}", true);
+                        Logger.Debug($"Deleting: {fileInfo.FullName}");
                         fileInfo.Delete();
                     }
                 }
 
-               Logger.Log("Cleanup completed.", true);
+               Logger.Debug("Cleanup completed.");
             }
             catch (Exception ex)
             {
-                Logger.Log($"Error: {ex.Message}", true);
+                Logger.Debug($"Error: {ex.Message}");
             }
         }
     }
